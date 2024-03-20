@@ -1,3 +1,0 @@
-# hawk
-
-Causal analysis prototype

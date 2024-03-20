@@ -1,0 +1,28 @@
+{
+  "template": "https://github.com/bird-house/cookiecutter-birdhouse.git",
+  "commit": "231d17eca6986f606d280cc25262d0153efd92c4",
+  "checkout": null,
+  "context": {
+    "cookiecutter": {
+      "full_name": "Paolo Bonetti",
+      "email": "paolo.bonetti@polimi.it",
+      "github_username": "PaoloBonettiPolimi",
+      "project_name": "Hawk",
+      "project_slug": "hawk",
+      "project_repo_name": "hawk",
+      "project_readthedocs_name": "hawk",
+      "project_short_description": "Causal analysis for climate data.",
+      "version": "0.1.0",
+      "open_source_license": "GNU General Public License v3",
+      "http_port": "5000",
+      "use_pytest": "y",
+      "use_black": "n",
+      "create_author_file": "y",
+      "_copy_without_render": [
+        "{{cookiecutter.project_slug}}/templates/*.cfg"
+      ],
+      "_template": "https://github.com/bird-house/cookiecutter-birdhouse.git"
+    }
+  },
+  "directory": null
+}

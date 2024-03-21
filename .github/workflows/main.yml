@@ -33,6 +33,10 @@ jobs:
     - name: Lint with flake8 ⚙️
       run: make lint
       if: matrix.python-version == 3.9
+    - name: Install documentation dependencies
+      run: |
+        python -m pip install -r <(python -c "import yaml; print('\n'.join(yaml.safe_load(open('environment_docs.yaml'))['dependencies']))")
+      if: matrix.python-version == 3.9
     - name: Build docs 🏗️
       run: make docs
       if: matrix.python-version == 3.9

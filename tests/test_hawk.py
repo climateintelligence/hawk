@@ -4,10 +4,10 @@
 
 import pytest
 
-from click.testing import CliRunner
+from click.testing import CliRunner  # noqa: F401
 
-import hawk
-from hawk import cli
+import hawk  # noqa: F401
+from hawk import cli  # noqa: F401
 
 
 @pytest.fixture

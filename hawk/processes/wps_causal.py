@@ -3,15 +3,35 @@ from pywps.app.Common import Metadata
 from pywps import FORMATS, Format
 from pathlib import Path
 import logging
+import pandas as pd
+from hawk.analysis import CausalAnalysis
 
 LOGGER = logging.getLogger("PYWPS")
 
+FORMAT_PNG = Format("image/png", extension=".png", encoding="base64")
+FORMAT_PICKLE = Format("application/octet-stream", extension=".pkl", encoding="utf-8")
 
 class Causal(Process):
     """A nice process saying 'hello'."""
 
     def __init__(self):
         inputs = [
+            ComplexInput(
+                "dataset_train",
+                "Train Dataset",
+                abstract="Please add the train csv file here.",
+                min_occurs=1,
+                max_occurs=1,
+                supported_formats=[FORMATS.CSV],
+            ),
+            ComplexInput(
+                "dataset_test",
+                "Test Dataset",
+                abstract="Please add the test csv file here.",
+                min_occurs=1,
+                max_occurs=1,
+                supported_formats=[FORMATS.CSV],
+            ),
             LiteralInput(
                 "target_column_name",
                 "Target Column Name",
@@ -88,13 +108,56 @@ class Causal(Process):
             ),
         ]
         outputs = [
-            LiteralOutput(
-                "output",
-                "Output response",
-                abstract="A friendly Hello from us.",
-                keywords=["output", "result", "response"],
-                data_type="string",
-            )
+            ComplexOutput(
+                "pkl_baseline",
+                "Baseline Scores",
+                abstract="The baseline scores on the initial data.",
+                as_reference=True,
+                supported_formats=[FORMAT_PICKLE],
+            ),
+            ComplexOutput(
+                "png_pcmci",
+                "Selected features by PCMCI",
+                abstract="The selected features by PCMCI.",
+                as_reference=True,
+                supported_formats=[FORMAT_PNG],
+            ),
+            ComplexOutput(
+                "pkl_pcmci",
+                "PCMCI Results Details",
+                abstract="The PCMCI results details.",
+                as_reference=True,
+                supported_formats=[FORMAT_PICKLE],
+            ),
+            ComplexOutput(
+                "png_tefs",
+                "Selected features by TEFS",
+                abstract="The selected features by TEFS.",
+                as_reference=True,
+                supported_formats=[FORMAT_PNG],
+            ),
+            ComplexOutput(
+                "pkl_tefs",
+                "TEFS Results",
+                abstract="The TEFS results.",
+                as_reference=True,
+                supported_formats=[FORMAT_PICKLE],
+            ),
+            ComplexOutput(
+                "png_tefs_wrapper",
+                "Wrapper scores by TEFS",
+                abstract="The wrapper scores evolution by TEFS.",
+                as_reference=True,
+                supported_formats=[FORMAT_PNG],
+            ),
+            ComplexOutput(
+                "pkl_tefs_wrapper",
+                "TEFS Wrapper Scores Evolution details",
+                abstract="The TEFS wrapper scores evolution details.",
+                as_reference=True,
+                supported_formats=[FORMAT_PICKLE],
+            ),
+            
         ]
 
         super(Causal, self).__init__(
@@ -122,14 +185,17 @@ class Causal(Process):
     def _handler(self, request, response):
         response.update_status("Processing started", 0)
 
-        # read the respons
+        # Read the inputs
         target_column_name = request.inputs["target_column_name"][0].data
+
+        df_train = pd.read_csv(request.inputs["dataset_train"][0].file)
+        df_test = pd.read_csv(request.inputs["dataset_test"][0].file)
+
         pcmci_test_choice = request.inputs["pcmci_test_choice"][0].data
         pcmci_max_lag = request.inputs["pcmci_max_lag"][0].data
+
         tefs_direction = request.inputs["tefs_direction"][0].data
-        tefs_use_comtemporary_features = request.inputs[
-            "tefs_use_comtemporary_features"
-        ][0].data
+        tefs_use_comtemporary_features = request.inputs["tefs_use_comtemporary_features"][0].data
         tefs_max_lag_features = request.inputs["tefs_max_lag_features"][0].data
         tefs_max_lag_target = request.inputs["tefs_max_lag_target"][0].data
 
@@ -137,6 +203,27 @@ class Causal(Process):
 
         # connect to the analysis class
 
-        response.outputs["output"].data = "Hello " + request.inputs["name"][0].data
-        response.outputs["output"].uom = UOM("unity")
+        causal_analysis = CausalAnalysis(
+            df_train,
+            df_test,
+            target_column_name,
+            pcmci_test_choice,
+            pcmci_max_lag,
+            tefs_direction,
+            tefs_use_comtemporary_features,
+            tefs_max_lag_features,
+            tefs_max_lag_target,
+            workdir,
+        )
+
+        causal_analysis.run()
+
+        response.outputs["pkl_baseline"].file = causal_analysis.baseline
+        response.outputs["png_pcmci"].file = causal_analysis.plot_pcmci
+        response.outputs["pkl_pcmci"].file = causal_analysis.details_pcmci
+        response.outputs["png_tefs"].file = causal_analysis.plot_tefs
+        response.outputs["pkl_tefs"].file = causal_analysis.details_tefs
+        response.outputs["png_tefs_wrapper"].file = causal_analysis.plot_tefs_wrapper
+        response.outputs["pkl_tefs_wrapper"].file = causal_analysis.details_tefs_wrapper
+
         return response

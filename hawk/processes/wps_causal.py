@@ -74,8 +74,8 @@ class Causal(Process):
                 ],
             ),
             LiteralInput(
-                "tefs_use_comtemporary_features",
-                "TEFS Use Comtemporary Features",
+                "tefs_use_contemporary_features",
+                "TEFS Use Contemporary Features",
                 data_type="boolean",
                 abstract="Choose whether to use comtemporary features in the TEFS algorithm.",
                 default=False,
@@ -162,8 +162,8 @@ class Causal(Process):
 
         super(Causal, self).__init__(
             self._handler,
-            identifier="hello",
-            title="Say Hello",
+            identifier="causal",
+            title="Causal Analysis",
             abstract="Just says a friendly Hello."
             "Returns a literal string output with Hello plus the inputed name.",
             keywords=["hello", "demo"],
@@ -195,7 +195,7 @@ class Causal(Process):
         pcmci_max_lag = request.inputs["pcmci_max_lag"][0].data
 
         tefs_direction = request.inputs["tefs_direction"][0].data
-        tefs_use_comtemporary_features = request.inputs["tefs_use_comtemporary_features"][0].data
+        tefs_use_contemporary_features = request.inputs["tefs_use_contemporary_features"][0].data
         tefs_max_lag_features = request.inputs["tefs_max_lag_features"][0].data
         tefs_max_lag_target = request.inputs["tefs_max_lag_target"][0].data
 
@@ -210,7 +210,7 @@ class Causal(Process):
             pcmci_test_choice,
             pcmci_max_lag,
             tefs_direction,
-            tefs_use_comtemporary_features,
+            tefs_use_contemporary_features,
             tefs_max_lag_features,
             tefs_max_lag_target,
             workdir,

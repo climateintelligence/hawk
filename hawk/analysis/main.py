@@ -4,12 +4,10 @@ import pandas as pd
 from tigramite.independence_tests.cmiknn import CMIknn
 from tigramite.independence_tests.parcorr import ParCorr
 
-import hawk.analysis.simulation_pcmci as simulation_pcmci
-import hawk.analysis.simulation_tefs as simulation_tefs
-
 from .metrics import regression_analysis
 from .pcmci_tools import initialize_tigramite_df
 from .postprocessing import run_postprocessing_pcmci, run_postprocessing_tefs
+from .simulation import run_simulation_pcmci, run_simulation_tefs
 
 
 class CausalAnalysis:
@@ -141,7 +139,7 @@ class CausalAnalysis:
         results = []
         for config in configurations:
             results.append(
-                simulation_tefs.run(
+                run_simulation_tefs(
                     datasets=self.datasets,
                     config=config,
                 )
@@ -203,7 +201,7 @@ class CausalAnalysis:
         results = []
         for config in configurations:
             results.append(
-                simulation_pcmci.run(
+                run_simulation_pcmci(
                     datasets=self.datasets,
                     config=config,
                     independence_tests=independence_tests,

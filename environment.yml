@@ -13,5 +13,7 @@ dependencies:
 - tigramite
 - tefs
 - pandas
+- scikit-learn
+- numpy
 # tests
 - pytest

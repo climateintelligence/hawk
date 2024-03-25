@@ -6,3 +6,5 @@ birdhouse-birdy
 tigramite
 tefs
 pandas
+scikit-learn
+numpy

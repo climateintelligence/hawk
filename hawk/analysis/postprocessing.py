@@ -8,6 +8,7 @@ import pandas as pd
 import seaborn as sns
 from tigramite import plotting as tp
 
+from .file_management import save_to_pkl_file
 from .metrics import regression_analysis
 from .pcmci_tools import get_connected_variables
 
@@ -163,7 +164,6 @@ def run_postprocessing_pcmci(
 
         # Extract the selected features
         selected_features = get_connected_variables(results["graph"], var_names)
-        basin_results[key]["selected_features"] = selected_features
 
         # Compute the R2 scores
         inputs_names_lags = {feature: [0] for feature in selected_features}
@@ -177,7 +177,6 @@ def run_postprocessing_pcmci(
             if len(selected_features) > 0
             else np.nan
         )
-        basin_results[key]["score_r2"] = score_r2
 
         inputs_names_lags = {feature: list(range(0, simulation["params"]["lag"] + 1)) for feature in selected_features}
         score_r2_lag = (
@@ -190,7 +189,6 @@ def run_postprocessing_pcmci(
             if len(selected_features) > 0
             else np.nan
         )
-        basin_results[key]["score_r2_lag"] = score_r2_lag
 
         inputs_names_lags = {feature: list(range(0, simulation["params"]["lag"] + 1)) for feature in selected_features}
         inputs_names_lags["target"] = list(range(1, simulation["params"]["lag"] + 1))
@@ -200,7 +198,6 @@ def run_postprocessing_pcmci(
             df_train=dataframe["train"],
             df_test=dataframe["test"],
         )
-        basin_results[key]["score_r2_lag_ar"] = score_r2_lag_ar
 
         # Table of results
         results_table_pcmci.append(
@@ -217,24 +214,20 @@ def run_postprocessing_pcmci(
             }
         )
 
-    results_table_pcmci = pd.DataFrame.from_records(results_table_pcmci)
-
     # Export the file to pkl
-    file_management.save_to_pkl_file(
-        os.path.join(constants.path_table_objects, f"results_table_{basin_name}_pcmci.pkl"), results_table_pcmci
-    )
+    target_file_results_details = os.path.join(destination_path, "results_details_pcmci.pkl")
+    save_to_pkl_file(target_file_results_details, results_table_pcmci)
 
     # Feature presences heatmap
     if "target" in all_basin_variables:
         all_basin_variables.remove("target")
     all_basin_variables = sorted(list(all_basin_variables))
-    df_presence = pd.DataFrame(index=all_basin_variables, columns=range(len(basin_results)))
+    df_presence = pd.DataFrame(index=all_basin_variables, columns=range(len(results_pcmci)))
     scores = []
     scores_lag = []
     scores_lag_ar = []
 
-    for index, key in enumerate(basin_results):
-        simulation = basin_results[key]
+    for index, simulation in enumerate(results_pcmci):
         scores.append(simulation["score_r2"])
         scores_lag.append(simulation["score_r2_lag"])
         scores_lag_ar.append(simulation["score_r2_lag_ar"])
@@ -258,12 +251,12 @@ def run_postprocessing_pcmci(
         scores_values=[scores, scores_lag, scores_lag_ar],
         scores_labels=[r"$R^2$", r"$R^2$ (lag)", r"$R^2$ (lag + AR)"],
     )
-    target_file = os.path.join(destination_path, "algorithm_results", "pcmci", "feature_presence.pdf")
-    os.makedirs(os.path.dirname(target_file), exist_ok=True)
-    plt.savefig(target_file, bbox_inches="tight")
+    target_file_plot = os.path.join(destination_path, "algorithm_results", "pcmci", "feature_presence.pdf")
+    os.makedirs(os.path.dirname(target_file_plot), exist_ok=True)
+    plt.savefig(target_file_plot, bbox_inches="tight")
     plt.close(fig)
 
-    return target_file
+    return target_file_plot, target_file_results_details
 
 
 def run_postprocessing_tefs(
@@ -284,16 +277,15 @@ def run_postprocessing_tefs(
         lagtarget = simulation["params"]["lagtarget"]
 
         # Plot the results
-        fig, ax = plt.subplots()
-        results.plot_te_results(ax=ax)
-        target_dir = os.path.join(constants.path_figures, "algorithm_results", basin_name, "te", key + ".pdf")
-        os.makedirs(os.path.dirname(target_dir), exist_ok=True)
-        plt.savefig(target_dir, bbox_inches="tight")
-        plt.close(fig)
+        # fig, ax = plt.subplots()
+        # results.plot_te_results(ax=ax)
+        # target_dir = os.path.join(constants.path_figures, "algorithm_results", basin_name, "te", key + ".pdf")
+        # os.makedirs(os.path.dirname(target_dir), exist_ok=True)
+        # plt.savefig(target_dir, bbox_inches="tight")
+        # plt.close(fig)
 
         # Extract the selected features
         selected_features_names = results.select_features(simulation["params"]["threshold"])
-        basin_results[key]["selected_features"] = selected_features_names
 
         # get the r2 score on the test set
         inputs_names_lags = {feature: [0] for feature in selected_features_names}
@@ -307,7 +299,6 @@ def run_postprocessing_tefs(
             if len(selected_features_names) > 0
             else np.nan
         )
-        basin_results[key]["score_r2"] = score_r2
 
         inputs_names_lags = {feature: lagfeatures for feature in selected_features_names}
         score_r2_lag = (
@@ -320,7 +311,6 @@ def run_postprocessing_tefs(
             if len(selected_features_names) > 0
             else np.nan
         )
-        basin_results[key]["score_r2_lag"] = score_r2_lag
 
         inputs_names_lags = {feature: lagfeatures for feature in selected_features_names}
         inputs_names_lags["target"] = lagtarget
@@ -330,7 +320,6 @@ def run_postprocessing_tefs(
             df_train=dataframe["train"],
             df_test=dataframe["test"],
         )
-        basin_results[key]["score_r2_lag_ar"] = score_r2_lag_ar
 
         # Table of results
         results_table_te.append(
@@ -347,24 +336,20 @@ def run_postprocessing_tefs(
             }
         )
 
-    results_table_te = pd.DataFrame.from_records(results_table_te)
-
     # Export the file to pkl
-    file_management.save_to_pkl_file(
-        os.path.join(destination_path, f"results_table_{basin_name}_te.pkl"), results_table_te
-    )
+    target_file_results_details = os.path.join(destination_path, "results_details_te.pkl")
+    save_to_pkl_file(target_file_results_details, results_table_te)
 
     # Feature presences heatmap
     if "target" in all_basin_variables:
         all_basin_variables.remove("target")
     all_basin_variables = sorted(list(all_basin_variables))
-    df_presence = pd.DataFrame(index=all_basin_variables, columns=range(len(basin_results)))
+    df_presence = pd.DataFrame(index=all_basin_variables, columns=range(len(results_tefs)))
     scores = []
     scores_lag = []
     scores_lag_ar = []
 
-    for index, key in enumerate(basin_results):
-        simulation = basin_results[key]
+    for index, simulation in enumerate(results_tefs):
         scores.append(simulation["score_r2"])
         scores_lag.append(simulation["score_r2_lag"])
         scores_lag_ar.append(simulation["score_r2_lag_ar"])
@@ -388,7 +373,9 @@ def run_postprocessing_tefs(
         scores_values=[scores, scores_lag, scores_lag_ar],
         scores_labels=[r"$R^2$", r"$R^2$ (lag)", r"$R^2$ (lag + AR)"],
     )
-    target_file = os.path.join(destination_path, "algorithm_results", basin_name, "te", "feature_presence.pdf")
-    os.makedirs(os.path.dirname(target_file), exist_ok=True)
-    plt.savefig(target_file, bbox_inches="tight")
+    target_file_plot = os.path.join(destination_path, "algorithm_results", "te", "feature_presence.pdf")
+    os.makedirs(os.path.dirname(target_file_plot), exist_ok=True)
+    plt.savefig(target_file_plot, bbox_inches="tight")
     plt.close(fig)
+
+    return target_file_plot, target_file_results_details

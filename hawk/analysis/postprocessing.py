@@ -401,8 +401,8 @@ def run_postprocessing_tefs_wrapper(
         features_columns = dataframe["full"].drop(columns=target_columns).columns
 
         # --------------------- Select features using threshold (conservative) ---------------------
-        # selected_features_names_with_threshold = simulation["results"].select_features(simulation["params"]["threshold"])
-        # n_features_selected_with_threshold = len(selected_features_names_with_threshold)
+        # selected_features_names_with_threshold = simulation["results"].select_features(simulation["params"]["threshold"]) # noqa
+        # n_features_selected_with_threshold = len(selected_features_names_with_threshold) # noqa
 
         # --------------------- Compute test R2 for each number of features ---------------------
         test_r2_train_test = []
@@ -510,13 +510,13 @@ def run_postprocessing_tefs_wrapper(
     # fig, ax = plt.subplots(figsize=(10, 5))
     # ax.plot(test_r2_cv.mean(axis=1), marker="o", label="Cross-validation")
     # maxima = np.where(test_r2_cv.mean(axis=1) == test_r2_cv.mean(axis=1).max())[0]
-    # ax.plot(maxima, test_r2_cv.mean(axis=1)[maxima], marker="o", color="red", linestyle="None", label="Maximum", markersize=10)
-    # ax.plot(n_features_selected_with_threshold, test_r2_cv.mean(axis=1)[n_features_selected_with_threshold], marker="o", color="green", linestyle="None", label="TEFS (conservative)", markersize=10)
+    # ax.plot(maxima, test_r2_cv.mean(axis=1)[maxima], marker="o", color="red", linestyle="None", label="Maximum", markersize=10) # noqa
+    # ax.plot(n_features_selected_with_threshold, test_r2_cv.mean(axis=1)[n_features_selected_with_threshold], marker="o", color="green", linestyle="None", label="TEFS (conservative)", markersize=10) # noqa
 
     # # plot confidence interval bands from cross-validation based on mean and standard deviation (90% confidence)
     # alpha = 0.1
     # quantile = scipy.stats.norm.ppf(1 - alpha / 2)
-    # ax.fill_between(range(test_r2_cv.shape[0]), test_r2_cv.mean(axis=1) - test_r2_cv.std(axis=1) * quantile / np.sqrt(test_r2_cv.shape[1]), test_r2_cv.mean(axis=1) + test_r2_cv.std(axis=1) * quantile / np.sqrt(test_r2_cv.shape[1]), alpha=0.3)
+    # ax.fill_between(range(test_r2_cv.shape[0]), test_r2_cv.mean(axis=1) - test_r2_cv.std(axis=1) * quantile / np.sqrt(test_r2_cv.shape[1]), test_r2_cv.mean(axis=1) + test_r2_cv.std(axis=1) * quantile / np.sqrt(test_r2_cv.shape[1]), alpha=0.3) # noqa
 
     # ax.set_xlabel("Number of features")
     # ax.set_ylabel("Test $R^2$")
@@ -528,7 +528,7 @@ def run_postprocessing_tefs_wrapper(
     # else:
     #     threshold_text = simulation["params"]["threshold"]
 
-    # title_text = f"TEFS on basin {basin_name.upper()} with dataset {dataset_name}\n[lagfeatures $={simulation['params']['lagfeatures']}$, lagtarget $={simulation['params']['lagtarget']}$, direction = {simulation['params']['direction']}, threshold $={threshold_text}]$"
+    # title_text = f"TEFS on basin {basin_name.upper()} with dataset {dataset_name}\n[lagfeatures $={simulation['params']['lagfeatures']}$, lagtarget $={simulation['params']['lagtarget']}$, direction = {simulation['params']['direction']}, threshold $={threshold_text}]$" # noqa
     # ax.set_title(title_text)
     # ax.legend()
     # if num_total_features < 30:

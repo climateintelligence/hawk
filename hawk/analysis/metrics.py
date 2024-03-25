@@ -6,8 +6,8 @@ from sklearn.metrics import r2_score
 from sklearn.model_selection import BaseCrossValidator, cross_val_score
 
 inputs_names_lags_doc = """
-:param inputs_names_lags: A dictionary mapping input feature names to their corresponding list of lags. 
-    For example, {'feature1': [1, 2], 'feature2': [1]} indicates 'feature1' should be lagged by 1 and 2 periods, 
+:param inputs_names_lags: A dictionary mapping input feature names to their corresponding list of lags.
+    For example, {'feature1': [1, 2], 'feature2': [1]} indicates 'feature1' should be lagged by 1 and 2 periods,
     and 'feature2' by 1 period.
 """
 
@@ -23,7 +23,7 @@ def prepare_data_with_lags(
 ) -> Tuple[pd.DataFrame, pd.Series]:
     f"""
     Prepares data for regression by generating lagged features for specified variables and targets.
-    
+
     :param df: The pandas DataFrame containing the time series data.
     {inputs_names_lags_doc}
     {target_name_doc}
@@ -72,7 +72,7 @@ def regression_analysis(
     f"""
     Performs regression analysis with support for either cross-validation or a train-test split,
     based on the arguments provided.
-    
+
     {inputs_names_lags_doc}
     {target_name_doc}
     :param df: DataFrame for cross-validation mode. If specified, cv_scheme must also be provided.
@@ -87,7 +87,7 @@ def regression_analysis(
     train_test_mode = bool(df_train is not None and df_test is not None)
     if not (cross_val_mode ^ train_test_mode):
         raise ValueError(
-            "Specify either cross-validation with 'cv_scheme' and 'df', or a train-test split with 'df_train' and 'df_test', not both."
+            "Specify either a 'cv_scheme' and 'df', or a train-test split with 'df_train' and 'df_test', not both."
         )
 
     if cross_val_mode:

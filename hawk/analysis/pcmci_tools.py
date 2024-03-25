@@ -9,7 +9,7 @@ def get_connected_variables(graph: np.ndarray, var_names: list[str]) -> list[str
     The target is assumed to be the last variable.
     The connection is considered of any type: from, to, or undefined.
 
-    :param graph: the graph of the PCMCI algorithm, i.e. what's returned by PCMCI.run_pcmci(), array of shape [N, N, tau_max+1]
+    :param graph: the graph of the PCMCI algorithm, i.e. what's returned by PCMCI.run_pcmci()
     :param var_names: the names of the variables
     """
 

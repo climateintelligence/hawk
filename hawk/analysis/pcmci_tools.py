@@ -46,8 +46,10 @@ def initialize_tigramite_df(df: pd.DataFrame):
     :return: tigramite dataframe and variable names tuple
     """
 
-    var_names = df.columns
+    dataframe = pp.DataFrame(
+        df.values,
+        datatime={0: np.arange(len(df))},
+        var_names=df.columns,
+    )
 
-    dataframe = pp.DataFrame(df.values, datatime={0: np.arange(len(df))}, var_names=var_names)
-
-    return dataframe, var_names
+    return dataframe

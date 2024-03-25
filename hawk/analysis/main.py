@@ -1,5 +1,6 @@
 import itertools
 
+import pandas as pd
 from tigramite.independence_tests.cmiknn import CMIknn
 from tigramite.independence_tests.parcorr import ParCorr
 
@@ -23,8 +24,19 @@ class CausalAnalysis:
         tefs_max_lag_target,
         workdir,
     ):
-        self.df_train = df_train
-        self.df_test = df_test
+        df_full = pd.concat([df_train, df_test], axis=1).reset_index(drop=True)
+        df_full_tigramite = pcmci_tools.initialize_tigramite_df(df_full)
+
+        self.datasets = {
+            "normal": {
+                "full_tigramite": df_full_tigramite,
+                "full": df_full,
+                "train": df_train,
+                "test": df_test,
+                "var_names": df_train.columns.tolist(),
+            },
+        }
+
         self.target_column_name = target_column_name
         self.pcmci_test_choice = pcmci_test_choice
         self.pcmci_max_lag = pcmci_max_lag
@@ -54,7 +66,7 @@ class CausalAnalysis:
     def run_baseline_analysis(self):
         baseline = {}
 
-        features_names = self.df_train.columns.tolist()
+        features_names = self.datasets["normal"]["var_names"]
 
         configs = []
 
@@ -76,8 +88,8 @@ class CausalAnalysis:
                 "r2": regression_analysis(
                     inputs_names_lags=inputs_names_lags,
                     target_name=self.target_column_name,
-                    df_train=self.df_train,
-                    df_test=self.df_test,
+                    df_train=self.datasets["normale"]["train"],
+                    df_test=self.datasets["normale"]["test"],
                 ),
             }
 
@@ -99,16 +111,6 @@ class CausalAnalysis:
             directions = ["forward", "backward"]
         else:
             directions = [self.tefs_direction]
-
-        # Define the different dataframes to use
-        datasets = {
-            "normal": {
-                "full": df_ticino,
-                "train": df_ticino_train,
-                "test": df_ticino_test,
-                "var_names": df_ticino.columns,
-            },
-        }
 
         dataset_names = [
             "normal",
@@ -134,11 +136,16 @@ class CausalAnalysis:
             configurations.append(configuration)
 
         # Run the analysis
+        results = []
         for config in configurations:
-            simulation_tefs.run(
-                datasets=datasets,
-                config=config,
+            results.append(
+                simulation_tefs.run(
+                    datasets=self.datasets,
+                    config=config,
+                )
             )
+
+        return results
 
     def run_pcmci_analysis(
         self,
@@ -153,17 +160,6 @@ class CausalAnalysis:
         independence_tests = {
             "parcorr": parcorr,
             "cmiknn": cmiknn,
-        }
-
-        # Create the dictionary of datasets
-        datasets = {
-            "snowlakes": {
-                "full_tigramite": df_ticino_snowlakes_tigramite,
-                "full": df_ticino_snowlakes,
-                "train": df_ticino_snowlakes_train,
-                "test": df_ticino_snowlakes_test,
-                "var_names": var_names_ticino_snowlakes,
-            },
         }
 
         independence_tests_options = [
@@ -195,15 +191,22 @@ class CausalAnalysis:
             }
             configurations.append(configuration)
 
+        # Run the analysis
         results = []
         for config in configurations:
             results.append(
                 simulation_pcmci.run(
-                    datasets=datasets,
+                    datasets=self.datasets,
                     config=config,
                     independence_tests=independence_tests,
                 )
             )
 
+        return results
+
     def run(self):
         self.baseline = self.run_baseline_analysis()
+        tefs_results = self.run_tefs_analysis()
+        pcmci_results = self.run_pcmci_analysis()
+
+        # post-processing

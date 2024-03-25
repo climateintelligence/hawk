@@ -4,10 +4,12 @@ import pandas as pd
 from tigramite.independence_tests.cmiknn import CMIknn
 from tigramite.independence_tests.parcorr import ParCorr
 
-import hawk.analysis.pcmci_tools as pcmci_tools
 import hawk.analysis.simulation_pcmci as simulation_pcmci
 import hawk.analysis.simulation_tefs as simulation_tefs
-from hawk.analysis.metrics import regression_analysis
+
+from .metrics import regression_analysis
+from .pcmci_tools import initialize_tigramite_df
+from .postprocessing import run_postprocessing_pcmci, run_postprocessing_tefs
 
 
 class CausalAnalysis:
@@ -25,7 +27,7 @@ class CausalAnalysis:
         workdir,
     ):
         df_full = pd.concat([df_train, df_test], axis=1).reset_index(drop=True)
-        df_full_tigramite = pcmci_tools.initialize_tigramite_df(df_full)
+        df_full_tigramite = initialize_tigramite_df(df_full)
 
         self.datasets = {
             "normal": {
@@ -154,7 +156,13 @@ class CausalAnalysis:
 
         # Define the tests
         parcorr = ParCorr(significance="analytic")
-        cmiknn = CMIknn(significance="shuffle_test", knn=0.1, shuffle_neighbors=5, transform="ranks", sig_samples=200)
+        cmiknn = CMIknn(
+            significance="shuffle_test",
+            knn=0.1,
+            shuffle_neighbors=5,
+            transform="ranks",
+            sig_samples=200,
+        )
 
         # Create the dictionary of tests
         independence_tests = {
@@ -209,4 +217,6 @@ class CausalAnalysis:
         tefs_results = self.run_tefs_analysis()
         pcmci_results = self.run_pcmci_analysis()
 
-        # post-processing
+        # post-processing passing self.workdir
+        self.plot_pcmci, self.details_pcmci = run_postprocessing_pcmci(pcmci_results, self.datasets, self.workdir)
+        self.plot_tefs, self.details_tefs = run_postprocessing_tefs(tefs_results, self.datasets, self.workdir)

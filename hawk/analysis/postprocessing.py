@@ -316,7 +316,7 @@ def run_postprocessing_tefs(
         inputs_names_lags["target"] = lagtarget
         score_r2_lag_ar = regression_analysis(
             inputs_names_lags=inputs_names_lags,
-            target_name="target",
+            target_name="target",  # TODO change to use the target column name given by the user
             df_train=dataframe["train"],
             df_test=dataframe["test"],
         )
@@ -379,3 +379,169 @@ def run_postprocessing_tefs(
     plt.close(fig)
 
     return target_file_plot, target_file_results_details
+
+
+def run_postprocessing_tefs_wrapper(
+    results_tefs,
+    datasets,
+    destination_path,
+):
+    results_table_tefs_wrapper = []
+    target_file_train_test = os.path.join(destination_path, "tefs_as_wrapper", "wrapper.pdf")
+    # target_file_cv = os.path.join(constants.path_figures, "tefs_as_wrapper_cv", f"{basename}_wrapper_cv.pdf")
+
+    fig, ax = plt.subplots(figsize=(10, 5))
+
+    for simulation in results_tefs:
+        # --------------------- Load corresponding dataset ---------------------
+        dataset_name = simulation["dataset_name"]
+        dataframe = datasets[dataset_name]
+
+        target_columns = ["target"]
+        features_columns = dataframe["full"].drop(columns=target_columns).columns
+
+        # --------------------- Select features using threshold (conservative) ---------------------
+        # selected_features_names_with_threshold = simulation["results"].select_features(simulation["params"]["threshold"])
+        # n_features_selected_with_threshold = len(selected_features_names_with_threshold)
+
+        # --------------------- Compute test R2 for each number of features ---------------------
+        test_r2_train_test = []
+        # test_r2_cv = []
+        num_total_features = len(features_columns)
+        for num_features in range(0, num_total_features + 1):
+            if num_features == 0:
+                selected_features_names = []
+            else:
+                selected_features_names = simulation["results"].select_n_features(num_features)
+
+            lagfeatures = simulation["params"]["lagfeatures"]
+            lagtarget = simulation["params"]["lagtarget"]
+
+            inputs_names_lags = {feature: lagfeatures for feature in selected_features_names}
+            inputs_names_lags["target"] = lagtarget
+
+            # --- Compute the train_test version ---
+            test_r2_train_test.append(
+                regression_analysis(
+                    inputs_names_lags=inputs_names_lags,
+                    target_name=target_columns[0],
+                    df_train=dataframe["train"],
+                    df_test=dataframe["test"],
+                )
+            )
+
+            # # --- Compute the cross-validation version ---
+            # # To perform a cross-validation, we need to concatenate the train and test sets
+            # unified_df = pd.concat([dataframe["train"], dataframe["test"]], axis=0).reset_index(drop=True)
+
+            # # Fixed window size
+            # # n_samples = unified_df.shape[0]
+            # # n_splits = 5
+            # # cv_scheme = TimeSeriesSplit(
+            # #     n_splits=n_splits,
+            # #     max_train_size=n_samples // (n_splits + 1),
+            # # )
+
+            # # Regular KFold
+            # cv_scheme = KFold(n_splits=4)  # 4 splits is about using the same test set size
+
+            # test_r2_cv.append(
+            #     regression_analysis(
+            #         inputs_names_lags=inputs_names_lags,
+            #         target_name=target_columns[0],
+            #         df=unified_df,
+            #         cv_scheme=cv_scheme,
+            #     )
+            # )
+
+        test_r2_train_test = np.array(test_r2_train_test)
+        # test_r2_cv = np.array(test_r2_cv)
+
+        results_table_tefs_wrapper.append({"test_r2_train_test": test_r2_train_test})
+
+        # Export the file to pkl
+        target_file_results_details = os.path.join(destination_path, "results_details_tefs_wrapper.pkl")
+        save_to_pkl_file(target_file_results_details, results_table_tefs_wrapper)
+
+        param_str = "_".join(f"{k}{v}" for k, v in simulation["params"].items())
+        ax.plot(test_r2_train_test, marker="o", label=param_str)
+        maxima = np.where(test_r2_train_test == test_r2_train_test.max())[0]
+        ax.plot(
+            maxima,
+            test_r2_train_test[maxima],
+            marker="o",
+            color="red",
+            linestyle="None",
+            label="Maximum",
+            markersize=6,
+        )
+        # ax.plot(
+        #     n_features_selected_with_threshold,
+        #     test_r2_train_test[n_features_selected_with_threshold],
+        #     marker="o",
+        #     color="green",
+        #     linestyle="None",
+        #     label="TEFS (conservative)",
+        #     markersize=10,
+        # )
+
+    ax.set_xlabel("Number of features")
+    ax.set_ylabel("Test $R^2$")
+    ax.set_title("TEFS Wrapper")
+    ax.legend()
+    if num_total_features < 30:
+        step = 1
+    elif num_total_features < 80:
+        step = 5
+    else:
+        step = 10
+    ax.set_xticks(range(0, num_total_features + 1, step))
+    ax.set_xticklabels(range(0, num_total_features + 1, step))
+    ax.set_ylim(-0.1, 0.55)
+    ax.grid()
+
+    os.makedirs(os.path.dirname(target_file_train_test), exist_ok=True)
+    plt.savefig(target_file_train_test, bbox_inches="tight")
+    plt.close(fig)
+
+    return target_file_train_test, target_file_results_details
+
+    # # --------------------- Plot cross-validation version ---------------------
+    # fig, ax = plt.subplots(figsize=(10, 5))
+    # ax.plot(test_r2_cv.mean(axis=1), marker="o", label="Cross-validation")
+    # maxima = np.where(test_r2_cv.mean(axis=1) == test_r2_cv.mean(axis=1).max())[0]
+    # ax.plot(maxima, test_r2_cv.mean(axis=1)[maxima], marker="o", color="red", linestyle="None", label="Maximum", markersize=10)
+    # ax.plot(n_features_selected_with_threshold, test_r2_cv.mean(axis=1)[n_features_selected_with_threshold], marker="o", color="green", linestyle="None", label="TEFS (conservative)", markersize=10)
+
+    # # plot confidence interval bands from cross-validation based on mean and standard deviation (90% confidence)
+    # alpha = 0.1
+    # quantile = scipy.stats.norm.ppf(1 - alpha / 2)
+    # ax.fill_between(range(test_r2_cv.shape[0]), test_r2_cv.mean(axis=1) - test_r2_cv.std(axis=1) * quantile / np.sqrt(test_r2_cv.shape[1]), test_r2_cv.mean(axis=1) + test_r2_cv.std(axis=1) * quantile / np.sqrt(test_r2_cv.shape[1]), alpha=0.3)
+
+    # ax.set_xlabel("Number of features")
+    # ax.set_ylabel("Test $R^2$")
+
+    # if simulation["params"]["threshold"] == np.inf:
+    #     threshold_text = "\infty"
+    # elif simulation["params"]["threshold"] == -np.inf:
+    #     threshold_text = "-\infty"
+    # else:
+    #     threshold_text = simulation["params"]["threshold"]
+
+    # title_text = f"TEFS on basin {basin_name.upper()} with dataset {dataset_name}\n[lagfeatures $={simulation['params']['lagfeatures']}$, lagtarget $={simulation['params']['lagtarget']}$, direction = {simulation['params']['direction']}, threshold $={threshold_text}]$"
+    # ax.set_title(title_text)
+    # ax.legend()
+    # if num_total_features < 30:
+    #     step = 1
+    # elif num_total_features < 80:
+    #     step = 5
+    # else:
+    #     step = 10
+    # ax.set_xticks(range(0, num_total_features + 1, step))
+    # ax.set_xticklabels(range(0, num_total_features + 1, step))
+    # ax.set_ylim(-0.1, 0.55)
+    # ax.grid()
+
+    # os.makedirs(os.path.dirname(target_file_cv), exist_ok=True)
+    # plt.savefig(target_file_cv, bbox_inches="tight")
+    # plt.close(fig)

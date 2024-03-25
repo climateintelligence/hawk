@@ -6,7 +6,11 @@ from tigramite.independence_tests.parcorr import ParCorr
 
 from .metrics import regression_analysis
 from .pcmci_tools import initialize_tigramite_df
-from .postprocessing import run_postprocessing_pcmci, run_postprocessing_tefs
+from .postprocessing import (
+    run_postprocessing_pcmci,
+    run_postprocessing_tefs,
+    run_postprocessing_tefs_wrapper,
+)
 from .simulation import run_simulation_pcmci, run_simulation_tefs
 
 
@@ -215,6 +219,8 @@ class CausalAnalysis:
         tefs_results = self.run_tefs_analysis()
         pcmci_results = self.run_pcmci_analysis()
 
-        # post-processing passing self.workdir
         self.plot_pcmci, self.details_pcmci = run_postprocessing_pcmci(pcmci_results, self.datasets, self.workdir)
         self.plot_tefs, self.details_tefs = run_postprocessing_tefs(tefs_results, self.datasets, self.workdir)
+        self.plot_tefs_wrapper, self.details_tefs_wrapper = run_postprocessing_tefs_wrapper(
+            tefs_results, self.datasets, self.workdir
+        )

@@ -1,4 +1,4 @@
-from pywps import Process, LiteralInput, LiteralOutput, UOM, ComplexInput, ComplexOutput
+from pywps import Process, LiteralInput, LiteralOutput, UOM, ComplexInput, ComplexOutput  # noqa
 from pywps.app.Common import Metadata
 from pywps import FORMATS, Format
 from pathlib import Path
@@ -10,6 +10,7 @@ LOGGER = logging.getLogger("PYWPS")
 
 FORMAT_PNG = Format("image/png", extension=".png", encoding="base64")
 FORMAT_PICKLE = Format("application/octet-stream", extension=".pkl", encoding="utf-8")
+
 
 class Causal(Process):
     """A nice process saying 'hello'."""
@@ -157,23 +158,19 @@ class Causal(Process):
                 as_reference=True,
                 supported_formats=[FORMAT_PICKLE],
             ),
-            
         ]
 
         super(Causal, self).__init__(
             self._handler,
             identifier="causal",
             title="Causal Analysis",
-            abstract="Just says a friendly Hello."
-            "Returns a literal string output with Hello plus the inputed name.",
+            abstract="Just says a friendly Hello. Returns a literal string output with Hello plus the inputed name.",
             keywords=["hello", "demo"],
             metadata=[
                 Metadata("PyWPS", "https://pywps.org/"),
                 Metadata("Birdhouse", "http://bird-house.github.io/"),
                 Metadata("PyWPS Demo", "https://pywps-demo.readthedocs.io/en/latest/"),
-                Metadata(
-                    "Emu: PyWPS examples", "https://emu.readthedocs.io/en/latest/"
-                ),
+                Metadata("Emu: PyWPS examples", "https://emu.readthedocs.io/en/latest/"),
             ],
             version="1.5",
             inputs=inputs,

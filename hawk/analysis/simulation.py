@@ -62,6 +62,7 @@ def run_simulation_pcmci(
 def run_simulation_tefs(
     datasets,
     config,
+    target_column_name,
     n_jobs=1,
 ):
     params = config["params"]
@@ -79,8 +80,8 @@ def run_simulation_tefs(
     # param_str = param_str.replace(" ", "")
     # config_id = f"dataset{dataset_name}_{param_str}"
 
-    features = dataframe["full"].drop(columns=["target"])
-    target = dataframe["full"]["target"]
+    features = dataframe["full"].drop(columns=[target_column_name])
+    target = dataframe["full"][target_column_name]
     var_names = list(features.columns)
 
     # run the feature selection algorithm

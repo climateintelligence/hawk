@@ -83,6 +83,7 @@ def plot_feature_presence_and_r2(df_presence, scores_values, scores_labels):
 
 def run_postprocessing_pcmci(
     results_pcmci,
+    target_column_name,
     datasets,
     destination_path,
 ):
@@ -170,7 +171,7 @@ def run_postprocessing_pcmci(
         score_r2 = (
             regression_analysis(
                 inputs_names_lags=inputs_names_lags,
-                target_name="target",
+                target_name=target_column_name,
                 df_train=dataframe["train"],
                 df_test=dataframe["test"],
             )
@@ -182,7 +183,7 @@ def run_postprocessing_pcmci(
         score_r2_lag = (
             regression_analysis(
                 inputs_names_lags=inputs_names_lags,
-                target_name="target",
+                target_name=target_column_name,
                 df_train=dataframe["train"],
                 df_test=dataframe["test"],
             )
@@ -191,10 +192,10 @@ def run_postprocessing_pcmci(
         )
 
         inputs_names_lags = {feature: list(range(0, simulation["params"]["lag"] + 1)) for feature in selected_features}
-        inputs_names_lags["target"] = list(range(1, simulation["params"]["lag"] + 1))
+        inputs_names_lags[target_column_name] = list(range(1, simulation["params"]["lag"] + 1))
         score_r2_lag_ar = regression_analysis(
             inputs_names_lags=inputs_names_lags,
-            target_name="target",
+            target_name=target_column_name,
             df_train=dataframe["train"],
             df_test=dataframe["test"],
         )
@@ -219,8 +220,8 @@ def run_postprocessing_pcmci(
     save_to_pkl_file(target_file_results_details, results_table_pcmci)
 
     # Feature presences heatmap
-    if "target" in all_basin_variables:
-        all_basin_variables.remove("target")
+    if target_column_name in all_basin_variables:
+        all_basin_variables.remove(target_column_name)
     all_basin_variables = sorted(list(all_basin_variables))
     df_presence = pd.DataFrame(index=all_basin_variables, columns=range(len(results_pcmci)))
     scores = []
@@ -261,6 +262,7 @@ def run_postprocessing_pcmci(
 
 def run_postprocessing_tefs(
     results_tefs,
+    target_column_name,
     datasets,
     destination_path,
 ):
@@ -292,7 +294,7 @@ def run_postprocessing_tefs(
         score_r2 = (
             regression_analysis(
                 inputs_names_lags=inputs_names_lags,
-                target_name="target",
+                target_name=target_column_name,
                 df_train=dataframe["train"],
                 df_test=dataframe["test"],
             )
@@ -304,7 +306,7 @@ def run_postprocessing_tefs(
         score_r2_lag = (
             regression_analysis(
                 inputs_names_lags=inputs_names_lags,
-                target_name="target",
+                target_name=target_column_name,
                 df_train=dataframe["train"],
                 df_test=dataframe["test"],
             )
@@ -313,10 +315,10 @@ def run_postprocessing_tefs(
         )
 
         inputs_names_lags = {feature: lagfeatures for feature in selected_features_names}
-        inputs_names_lags["target"] = lagtarget
+        inputs_names_lags[target_column_name] = lagtarget
         score_r2_lag_ar = regression_analysis(
             inputs_names_lags=inputs_names_lags,
-            target_name="target",  # TODO change to use the target column name given by the user
+            target_name=target_column_name,  # TODO change to use the target column name given by the user
             df_train=dataframe["train"],
             df_test=dataframe["test"],
         )
@@ -341,8 +343,8 @@ def run_postprocessing_tefs(
     save_to_pkl_file(target_file_results_details, results_table_te)
 
     # Feature presences heatmap
-    if "target" in all_basin_variables:
-        all_basin_variables.remove("target")
+    if target_column_name in all_basin_variables:
+        all_basin_variables.remove(target_column_name)
     all_basin_variables = sorted(list(all_basin_variables))
     df_presence = pd.DataFrame(index=all_basin_variables, columns=range(len(results_tefs)))
     scores = []
@@ -383,6 +385,7 @@ def run_postprocessing_tefs(
 
 def run_postprocessing_tefs_wrapper(
     results_tefs,
+    target_column_name,
     datasets,
     destination_path,
 ):
@@ -397,8 +400,7 @@ def run_postprocessing_tefs_wrapper(
         dataset_name = simulation["dataset_name"]
         dataframe = datasets[dataset_name]
 
-        target_columns = ["target"]
-        features_columns = dataframe["full"].drop(columns=target_columns).columns
+        features_columns = dataframe["full"].drop(columns=[target_column_name]).columns
 
         # --------------------- Select features using threshold (conservative) ---------------------
         # selected_features_names_with_threshold = simulation["results"].select_features(simulation["params"]["threshold"]) # noqa
@@ -418,13 +420,13 @@ def run_postprocessing_tefs_wrapper(
             lagtarget = simulation["params"]["lagtarget"]
 
             inputs_names_lags = {feature: lagfeatures for feature in selected_features_names}
-            inputs_names_lags["target"] = lagtarget
+            inputs_names_lags[target_column_name] = lagtarget
 
             # --- Compute the train_test version ---
             test_r2_train_test.append(
                 regression_analysis(
                     inputs_names_lags=inputs_names_lags,
-                    target_name=target_columns[0],
+                    target_name=target_column_name,
                     df_train=dataframe["train"],
                     df_test=dataframe["test"],
                 )

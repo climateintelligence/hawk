@@ -145,6 +145,7 @@ class CausalAnalysis:
             results.append(
                 run_simulation_tefs(
                     datasets=self.datasets,
+                    target_column_name=self.target_column_name,
                     config=config,
                 )
             )
@@ -219,8 +220,21 @@ class CausalAnalysis:
         tefs_results = self.run_tefs_analysis()
         pcmci_results = self.run_pcmci_analysis()
 
-        self.plot_pcmci, self.details_pcmci = run_postprocessing_pcmci(pcmci_results, self.datasets, self.workdir)
-        self.plot_tefs, self.details_tefs = run_postprocessing_tefs(tefs_results, self.datasets, self.workdir)
+        self.plot_pcmci, self.details_pcmci = run_postprocessing_pcmci(
+            results_pcmci=pcmci_results,
+            target_column_name=self.target_column_name,
+            datasets=self.datasets,
+            destination_path=self.workdir,
+        )
+        self.plot_tefs, self.details_tefs = run_postprocessing_tefs(
+            results_tefs=tefs_results,
+            target_column_name=self.target_column_name,
+            datasets=self.datasets,
+            destination_path=self.workdir,
+        )
         self.plot_tefs_wrapper, self.details_tefs_wrapper = run_postprocessing_tefs_wrapper(
-            tefs_results, self.datasets, self.workdir
+            results_tefs=tefs_results,
+            target_column_name=self.target_column_name,
+            datasets=self.datasets,
+            destination_path=self.workdir,
         )

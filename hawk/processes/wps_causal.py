@@ -198,7 +198,7 @@ class Causal(Process):
 
         workdir = Path(self.workdir)
 
-        if tefs_use_contemporary_features == False and tefs_max_lag_features == "no_lag":
+        if not tefs_use_contemporary_features and tefs_max_lag_features == "no_lag":
             raise ValueError("You cannot use no lag features and not use contemporary features in TEFS.")
 
         causal_analysis = CausalAnalysis(

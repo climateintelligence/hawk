@@ -39,12 +39,12 @@ resp = wps.causal(
     dataset_train=train_file_path,
     dataset_test=test_file_path,
     target_column_name=target_name,
-    pcmci_test_choice="parcorr",
-    pcmci_max_lag=1,
+    pcmci_test_choice="ParCorr",
+    pcmci_max_lag="1",
     tefs_direction="both",
-    tefs_use_contemporary_features=True,
-    tefs_max_lag_features=1,
-    tefs_max_lag_target=1,
+    tefs_use_contemporary_features="Yes",
+    tefs_max_lag_features="1",
+    tefs_max_lag_target="1",
 )
 
 print(resp)

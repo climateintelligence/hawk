@@ -79,7 +79,7 @@ class Causal(Process):
                 "TEFS Use Contemporary Features",
                 data_type="boolean",
                 abstract="Choose whether to use comtemporary features in the TEFS algorithm.",
-                default=False,
+                default="Yes",
             ),
             LiteralInput(
                 "tefs_max_lag_features",
@@ -87,7 +87,8 @@ class Causal(Process):
                 data_type="string",
                 abstract="Choose the maximum lag of the features in the TEFS algorithm.",
                 allowed_values=[
-                    "no_lag" "1",
+                    "no_lag",
+                    "1",
                     "2",
                     "3",
                     "4",

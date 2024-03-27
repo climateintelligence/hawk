@@ -190,12 +190,12 @@ class Causal(Process):
         df_test = pd.read_csv(request.inputs["dataset_test"][0].file)
 
         pcmci_test_choice = request.inputs["pcmci_test_choice"][0].data
-        pcmci_max_lag = request.inputs["pcmci_max_lag"][0].data
+        pcmci_max_lag = int(request.inputs["pcmci_max_lag"][0].data)
 
         tefs_direction = request.inputs["tefs_direction"][0].data
         tefs_use_contemporary_features = request.inputs["tefs_use_contemporary_features"][0].data
-        tefs_max_lag_features = request.inputs["tefs_max_lag_features"][0].data
-        tefs_max_lag_target = request.inputs["tefs_max_lag_target"][0].data
+        tefs_max_lag_features = int(request.inputs["tefs_max_lag_features"][0].data)
+        tefs_max_lag_target = int(request.inputs["tefs_max_lag_target"][0].data)
 
         workdir = Path(self.workdir)
 

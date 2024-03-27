@@ -155,7 +155,7 @@ class CausalAnalysis:
     def run_pcmci_analysis(
         self,
     ):
-        lag_options = [self.pcmci_features_lags[: i + 1] for i in range(len(self.pcmci_features_lags))]
+        lag_options = self.pcmci_features_lags  # max lag
 
         # Define the tests
         parcorr = ParCorr(significance="analytic")

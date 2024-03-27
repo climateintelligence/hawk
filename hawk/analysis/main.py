@@ -33,6 +33,11 @@ class CausalAnalysis:
     ):
         self.response = response
 
+        # Move target column as last column for the get_connected_variables
+        # function which requires it (TODO this would be interesting to be fixed)
+        df_train = df_train[[col for col in df_train.columns if col != target_column_name] + [target_column_name]]
+        df_test = df_test[[col for col in df_test.columns if col != target_column_name] + [target_column_name]]
+
         df_full = pd.concat([df_train, df_test], axis=0).reset_index(drop=True)
         df_full_tigramite = initialize_tigramite_df(df_full)
 

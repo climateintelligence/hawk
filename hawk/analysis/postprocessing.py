@@ -207,7 +207,7 @@ def run_postprocessing_pcmci(
                 "score_r2": score_r2,
                 "score_r2_lag": score_r2_lag,
                 "score_r2_lag_ar": score_r2_lag_ar,
-                "dataset": simulation["dataset_name"],
+                "dataset_name": simulation["dataset_name"],
                 "algorithm": simulation["params"]["algorithm"],
                 "independencetest": simulation["params"]["independencetest"],
                 "lag": simulation["params"]["lag"],
@@ -228,18 +228,18 @@ def run_postprocessing_pcmci(
     scores_lag = []
     scores_lag_ar = []
 
-    for index, simulation in enumerate(results_pcmci):
-        scores.append(simulation["score_r2"])
-        scores_lag.append(simulation["score_r2_lag"])
-        scores_lag_ar.append(simulation["score_r2_lag_ar"])
+    for index, result in enumerate(results_table_pcmci):
+        scores.append(result["score_r2"])
+        scores_lag.append(result["score_r2_lag"])
+        scores_lag_ar.append(result["score_r2_lag_ar"])
 
         # loop through the rows of the df, if the feature is in the list of selected features, put a 1
         for feature in df_presence.index:
-            if feature in simulation["selected_features"]:
+            if feature in result["selected_features"]:
                 df_presence.loc[feature, index] = 1
             else:
                 df_presence.loc[feature, index] = 0
-            if feature not in datasets[simulation["dataset_name"]]["var_names"]:
+            if feature not in datasets[result["dataset_name"]]["var_names"]:
                 df_presence.loc[feature, index] = 2
 
     df_presence = df_presence.astype(float)
@@ -269,8 +269,7 @@ def run_postprocessing_tefs(
     all_basin_variables = set()
     results_table_te = []
     for simulation in results_tefs:
-        dataset_name = simulation["dataset_name"]
-        dataframe = datasets[dataset_name]
+        dataframe = datasets[simulation["dataset_name"]]
         var_names = dataframe["var_names"]
         all_basin_variables.update(var_names)
 
@@ -330,7 +329,7 @@ def run_postprocessing_tefs(
                 "score_r2": score_r2,
                 "score_r2_lag": score_r2_lag,
                 "score_r2_lag_ar": score_r2_lag_ar,
-                "dataset": dataset_name,
+                "dataset_name": simulation["dataset_name"],
                 "lagfeatures": simulation["params"]["lagfeatures"],
                 "lagtarget": simulation["params"]["lagtarget"],
                 "direction": simulation["params"]["direction"],  # not putting threshold and k
@@ -351,18 +350,18 @@ def run_postprocessing_tefs(
     scores_lag = []
     scores_lag_ar = []
 
-    for index, simulation in enumerate(results_tefs):
-        scores.append(simulation["score_r2"])
-        scores_lag.append(simulation["score_r2_lag"])
-        scores_lag_ar.append(simulation["score_r2_lag_ar"])
+    for index, result in enumerate(results_table_te):
+        scores.append(result["score_r2"])
+        scores_lag.append(result["score_r2_lag"])
+        scores_lag_ar.append(result["score_r2_lag_ar"])
 
         # loop through the rows of the df, if the feature is in the list of selected features, put a 1
         for feature in df_presence.index:
-            if feature in simulation["selected_features"]:
+            if feature in result["selected_features"]:
                 df_presence.loc[feature, index] = 1
             else:
                 df_presence.loc[feature, index] = 0
-            if feature not in datasets[simulation["dataset_name"]]["var_names"]:
+            if feature not in datasets[result["dataset_name"]]["var_names"]:
                 df_presence.loc[feature, index] = 2
 
     df_presence = df_presence.astype(float)

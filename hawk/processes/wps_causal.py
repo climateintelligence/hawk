@@ -213,6 +213,7 @@ class Causal(Process):
             tefs_max_lag_features,
             tefs_max_lag_target,
             workdir,
+            response,
         )
 
         causal_analysis.run()
@@ -224,5 +225,7 @@ class Causal(Process):
         response.outputs["pkl_tefs"].file = causal_analysis.details_tefs
         response.outputs["png_tefs_wrapper"].file = causal_analysis.plot_tefs_wrapper
         response.outputs["pkl_tefs_wrapper"].file = causal_analysis.details_tefs_wrapper
+
+        response.update_status("Processing completed", 100)
 
         return response

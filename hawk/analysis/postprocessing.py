@@ -92,7 +92,7 @@ def run_postprocessing_pcmci(
     for simulation in results_pcmci:
         dataframe = datasets[simulation["dataset_name"]]
         var_names = dataframe["var_names"]
-        all_basin_variables.update(var_names.values)
+        all_basin_variables.update(var_names)
 
         results = simulation["results"]
 

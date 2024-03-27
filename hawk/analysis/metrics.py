@@ -37,7 +37,7 @@ def prepare_data_with_lags(
         )
 
     for lags in inputs_names_lags.values():
-        if min(lags) < 0:
+        if lags and min(lags) < 0:
             raise ValueError("Lag for independent variables must be a non-negative integer.")
 
     # Initialize a list to hold all DataFrame chunks

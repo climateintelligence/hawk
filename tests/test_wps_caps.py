@@ -1,7 +1,8 @@
 from pywps import Service
 
-from .common import client_for
 from hawk.processes import processes
+
+from .common import client_for
 
 
 def test_wps_caps():
@@ -12,5 +13,6 @@ def test_wps_caps():
                             '/wps:Process'
                             '/ows:Identifier')
     assert sorted(names.split()) == [
+        'causal',
         'hello',
     ]

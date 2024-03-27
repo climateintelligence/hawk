@@ -2,3 +2,9 @@ click
 jinja2
 psutil
 pywps>=4.5.1,<4.6
+birdhouse-birdy
+tigramite>=5.2.5.1
+tefs
+pandas
+scikit-learn
+numpy

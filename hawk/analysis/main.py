@@ -1,9 +1,11 @@
 import itertools
+import os
 
 import pandas as pd
 from tigramite.independence_tests.cmiknn import CMIknn
 from tigramite.independence_tests.parcorr import ParCorr
 
+from .file_management import save_to_pkl_file
 from .metrics import regression_analysis
 from .pcmci_tools import initialize_tigramite_df
 from .postprocessing import (
@@ -97,7 +99,10 @@ class CausalAnalysis:
                 ),
             }
 
-        return baseline
+        target_file = os.path.join(self.workdir, "baseline.pkl")
+        save_to_pkl_file(target_file, baseline)
+
+        return target_file
 
     def run_tefs_analysis(
         self,

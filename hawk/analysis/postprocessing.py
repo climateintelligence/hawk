@@ -490,7 +490,7 @@ def run_postprocessing_tefs_wrapper(
     ax.set_xlabel("Number of features")
     ax.set_ylabel("Test $R^2$")
     ax.set_title("TEFS Wrapper")
-    ax.legend()
+    ax.legend(title="Configurations", bbox_to_anchor=(1.05, 1), loc="upper left", borderaxespad=0)
     if num_total_features < 30:
         step = 1
     elif num_total_features < 80:

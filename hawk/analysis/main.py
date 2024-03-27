@@ -173,10 +173,10 @@ class CausalAnalysis:
             "cmiknn": cmiknn,
         }
 
-        independence_tests_options = [
-            "parcorr",
-            "cmiknn",
-        ]
+        if self.pcmci_test_choice == "ParCorr":
+            independence_tests_options = ["parcorr"]
+        elif self.pcmci_test_choice == "CMIknn":
+            independence_tests_options = ["cmiknn"]
 
         algorithm_options = [
             "pcmci_plus",

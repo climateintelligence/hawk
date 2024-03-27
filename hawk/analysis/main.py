@@ -29,7 +29,10 @@ class CausalAnalysis:
         tefs_max_lag_features,
         tefs_max_lag_target,
         workdir,
+        response=None,
     ):
+        self.response = response
+
         df_full = pd.concat([df_train, df_test], axis=0).reset_index(drop=True)
         df_full_tigramite = initialize_tigramite_df(df_full)
 
@@ -221,22 +224,34 @@ class CausalAnalysis:
         return results
 
     def run(self):
+        if self.response:
+            self.response.update_status("Performing baseline analysis", 16)
         self.baseline = self.run_baseline_analysis()
+        if self.response:
+            self.response.update_status("Performing TEFS analysis", 33)
         tefs_results = self.run_tefs_analysis()
+        if self.response:
+            self.response.update_status("Performing PCMCI analysis", 66)
         pcmci_results = self.run_pcmci_analysis()
 
+        if self.response:
+            self.response.update_status("Postprocessing PCMCI", 80)
         self.plot_pcmci, self.details_pcmci = run_postprocessing_pcmci(
             results_pcmci=pcmci_results,
             target_column_name=self.target_column_name,
             datasets=self.datasets,
             destination_path=self.workdir,
         )
+        if self.response:
+            self.response.update_status("Postprocessing TEFS", 90)
         self.plot_tefs, self.details_tefs = run_postprocessing_tefs(
             results_tefs=tefs_results,
             target_column_name=self.target_column_name,
             datasets=self.datasets,
             destination_path=self.workdir,
         )
+        if self.response:
+            self.response.update_status("Postprocessing TEFS Wrapper", 95)
         self.plot_tefs_wrapper, self.details_tefs_wrapper = run_postprocessing_tefs_wrapper(
             results_tefs=tefs_results,
             target_column_name=self.target_column_name,

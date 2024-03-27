@@ -3,7 +3,7 @@ jinja2
 psutil
 pywps>=4.5.1,<4.6
 birdhouse-birdy
-tigramite
+tigramite>=5.2.5.1
 tefs
 pandas
 scikit-learn

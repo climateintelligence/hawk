@@ -92,8 +92,8 @@ class CausalAnalysis:
                 "r2": regression_analysis(
                     inputs_names_lags=inputs_names_lags,
                     target_name=self.target_column_name,
-                    df_train=self.datasets["normale"]["train"],
-                    df_test=self.datasets["normale"]["test"],
+                    df_train=self.datasets["normal"]["train"],
+                    df_test=self.datasets["normal"]["test"],
                 ),
             }
 

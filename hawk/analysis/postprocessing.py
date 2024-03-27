@@ -499,7 +499,7 @@ def run_postprocessing_tefs_wrapper(
         step = 10
     ax.set_xticks(range(0, num_total_features + 1, step))
     ax.set_xticklabels(range(0, num_total_features + 1, step))
-    ax.set_ylim(-0.1, 0.55)
+    ax.set_ylim(-0.1, 1.1)
     ax.grid()
 
     os.makedirs(os.path.dirname(target_file_train_test), exist_ok=True)

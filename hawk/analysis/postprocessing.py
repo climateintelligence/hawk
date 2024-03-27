@@ -467,16 +467,16 @@ def run_postprocessing_tefs_wrapper(
 
         param_str = "_".join(f"{k}{v}" for k, v in simulation["params"].items())
         ax.plot(test_r2_train_test, marker="o", label=param_str)
-        maxima = np.where(test_r2_train_test == test_r2_train_test.max())[0]
-        ax.plot(
-            maxima,
-            test_r2_train_test[maxima],
-            marker="o",
-            color="red",
-            linestyle="None",
-            label="Maximum",
-            markersize=6,
-        )
+        # maxima = np.where(test_r2_train_test == test_r2_train_test.max())[0]
+        # ax.plot(
+        #     maxima,
+        #     test_r2_train_test[maxima],
+        #     marker="o",
+        #     color="red",
+        #     linestyle="None",
+        #     label="Maximum",
+        #     markersize=6,
+        # )
         # ax.plot(
         #     n_features_selected_with_threshold,
         #     test_r2_train_test[n_features_selected_with_threshold],

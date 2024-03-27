@@ -28,7 +28,7 @@ class CausalAnalysis:
         tefs_max_lag_target,
         workdir,
     ):
-        df_full = pd.concat([df_train, df_test], axis=1).reset_index(drop=True)
+        df_full = pd.concat([df_train, df_test], axis=0).reset_index(drop=True)
         df_full_tigramite = initialize_tigramite_df(df_full)
 
         self.datasets = {

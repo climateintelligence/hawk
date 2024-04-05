@@ -9,7 +9,7 @@ dependencies:
 - jinja2
 - click
 - psutil
-- birdhouse-birdy
+- birdy
 #- tigramite
 #- tefs
 - pandas

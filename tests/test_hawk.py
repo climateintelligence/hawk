@@ -28,8 +28,8 @@ def test_content(response):
 
 
 def test_causal_analysis():
-    df_train = pd.read_csv("analysis/demo/Ticino_train.csv", header=0)
-    df_test = pd.read_csv("analysis/demo/Ticino_test.csv", header=0)
+    df_train = pd.read_csv("hawk/analysis/demo/Ticino_train.csv", header=0)
+    df_test = pd.read_csv("hawk/analysis/demo/Ticino_test.csv", header=0)
     target_column_name = "target"
     pcmci_test_choice = "ParCorr"
     pcmci_max_lag = 0

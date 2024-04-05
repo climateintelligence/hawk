@@ -9,5 +9,11 @@ dependencies:
 - jinja2
 - click
 - psutil
+- birdhouse-birdy
+- tigramite
+- tefs
+- pandas
+- scikit-learn
+- numpy
 # tests
 - pytest

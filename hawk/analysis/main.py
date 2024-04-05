@@ -70,11 +70,11 @@ class CausalAnalysis:
         self.pcmci_features_lags = list(range(0, self.pcmci_max_lag + 1))
 
         self.baseline = None
-        self.plot_pcmci = None
+        self.plot_pcmci = {}
         self.details_pcmci = None
-        self.plot_tefs = None
+        self.plot_tefs = {}
         self.details_tefs = None
-        self.plot_tefs_wrapper = None
+        self.plot_tefs_wrapper = {}
         self.details_tefs_wrapper = None
 
     def run_baseline_analysis(self):
@@ -246,6 +246,7 @@ class CausalAnalysis:
             target_column_name=self.target_column_name,
             datasets=self.datasets,
             destination_path=self.workdir,
+            image_formats=["pdf", "png"],
         )
         if self.response:
             self.response.update_status("Postprocessing TEFS", 90)
@@ -254,6 +255,7 @@ class CausalAnalysis:
             target_column_name=self.target_column_name,
             datasets=self.datasets,
             destination_path=self.workdir,
+            image_formats=["pdf", "png"],
         )
         if self.response:
             self.response.update_status("Postprocessing TEFS Wrapper", 95)
@@ -262,4 +264,5 @@ class CausalAnalysis:
             target_column_name=self.target_column_name,
             datasets=self.datasets,
             destination_path=self.workdir,
+            image_formats=["pdf", "png"],
         )

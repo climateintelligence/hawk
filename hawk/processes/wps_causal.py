@@ -186,8 +186,13 @@ class Causal(Process):
         # Read the inputs
         target_column_name = request.inputs["target_column_name"][0].data
 
-        df_train = pd.read_csv(request.inputs["dataset_train"][0].file)
-        df_test = pd.read_csv(request.inputs["dataset_test"][0].file)
+        df_train = pd.read_csv(request.inputs["dataset_train"][0].file, header=0)
+        df_test = pd.read_csv(request.inputs["dataset_test"][0].file, header=0)
+
+        LOGGER.info(f"Train shape: {df_train.shape}")
+        LOGGER.info(f"Test shape: {df_test.shape}")
+        LOGGER.info(f"Train columns: {df_train.columns}")
+        LOGGER.info(f"Test columns: {df_test.columns}")
 
         pcmci_test_choice = request.inputs["pcmci_test_choice"][0].data
         pcmci_max_lag = int(request.inputs["pcmci_max_lag"][0].data)

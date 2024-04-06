@@ -9,6 +9,7 @@ from hawk.analysis import CausalAnalysis
 LOGGER = logging.getLogger("PYWPS")
 
 FORMAT_PNG = Format("image/png", extension=".png", encoding="base64")
+FORMAT_PDF = Format("application/pdf", extension=".pdf", encoding="utf-8")
 FORMAT_PICKLE = Format("application/octet-stream", extension=".pkl", encoding="utf-8")
 
 
@@ -120,7 +121,14 @@ class Causal(Process):
                 supported_formats=[FORMAT_PICKLE],
             ),
             ComplexOutput(
-                "png_pcmci",
+                "plot_pcmci",
+                "Selected features by PCMCI",
+                abstract="The selected features by PCMCI.",
+                as_reference=True,
+                supported_formats=[FORMAT_PDF],
+            ),
+            ComplexOutput(
+                "plot_pcmci_preview",
                 "Selected features by PCMCI",
                 abstract="The selected features by PCMCI.",
                 as_reference=True,
@@ -134,7 +142,14 @@ class Causal(Process):
                 supported_formats=[FORMAT_PICKLE],
             ),
             ComplexOutput(
-                "png_tefs",
+                "plot_tefs",
+                "Selected features by TEFS",
+                abstract="The selected features by TEFS.",
+                as_reference=True,
+                supported_formats=[FORMAT_PDF],
+            ),
+            ComplexOutput(
+                "plot_tefs_preview",
                 "Selected features by TEFS",
                 abstract="The selected features by TEFS.",
                 as_reference=True,
@@ -148,7 +163,14 @@ class Causal(Process):
                 supported_formats=[FORMAT_PICKLE],
             ),
             ComplexOutput(
-                "png_tefs_wrapper",
+                "plot_tefs_wrapper",
+                "Wrapper scores by TEFS",
+                abstract="The wrapper scores evolution by TEFS.",
+                as_reference=True,
+                supported_formats=[FORMAT_PDF],
+            ),
+            ComplexOutput(
+                "plot_tefs_wrapper_preview",
                 "Wrapper scores by TEFS",
                 abstract="The wrapper scores evolution by TEFS.",
                 as_reference=True,
@@ -226,12 +248,17 @@ class Causal(Process):
         causal_analysis.run()
 
         response.outputs["pkl_baseline"].file = causal_analysis.baseline
-        response.outputs["png_pcmci"].file = causal_analysis.plot_pcmci
+        response.outputs["plot_pcmci"].file = causal_analysis.plot_pcmci["pdf"]
         response.outputs["pkl_pcmci"].file = causal_analysis.details_pcmci
-        response.outputs["png_tefs"].file = causal_analysis.plot_tefs
+        response.outputs["plot_tefs"].file = causal_analysis.plot_tefs["pdf"]
         response.outputs["pkl_tefs"].file = causal_analysis.details_tefs
-        response.outputs["png_tefs_wrapper"].file = causal_analysis.plot_tefs_wrapper
+        response.outputs["plot_tefs_wrapper"].file = causal_analysis.plot_tefs_wrapper["pdf"]
         response.outputs["pkl_tefs_wrapper"].file = causal_analysis.details_tefs_wrapper
+
+        # Previews for the plots in png format
+        response.outputs["plot_pcmci_preview"].file = causal_analysis.plot_pcmci["png"]
+        response.outputs["plot_tefs_preview"].file = causal_analysis.plot_tefs["png"]
+        response.outputs["plot_tefs_wrapper_preview"].file = causal_analysis.plot_tefs_wrapper["png"]
 
         response.update_status("Processing completed", 100)
 

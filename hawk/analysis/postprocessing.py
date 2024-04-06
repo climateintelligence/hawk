@@ -86,6 +86,7 @@ def run_postprocessing_pcmci(
     target_column_name,
     datasets,
     destination_path,
+    image_formats=["pdf", "png"],
 ):
     all_basin_variables = set()
     results_table_pcmci = []
@@ -252,12 +253,18 @@ def run_postprocessing_pcmci(
         scores_values=[scores, scores_lag, scores_lag_ar],
         scores_labels=[r"$R^2$", r"$R^2$ (lag)", r"$R^2$ (lag + AR)"],
     )
-    target_file_plot = os.path.join(destination_path, "algorithm_results", "pcmci", "feature_presence.pdf")
-    os.makedirs(os.path.dirname(target_file_plot), exist_ok=True)
-    plt.savefig(target_file_plot, bbox_inches="tight")
+
+    target_file_plots = {}
+    for image_format in image_formats:
+        target_file_plot = os.path.join(
+            destination_path, "algorithm_results", "pcmci", f"feature_presence.{image_format}"
+        )
+        os.makedirs(os.path.dirname(target_file_plot), exist_ok=True)
+        plt.savefig(target_file_plot, bbox_inches="tight")
+        target_file_plots[image_format] = target_file_plot
     plt.close(fig)
 
-    return target_file_plot, target_file_results_details
+    return target_file_plots, target_file_results_details
 
 
 def run_postprocessing_tefs(
@@ -265,6 +272,7 @@ def run_postprocessing_tefs(
     target_column_name,
     datasets,
     destination_path,
+    image_formats=["pdf", "png"],
 ):
     all_basin_variables = set()
     results_table_te = []
@@ -374,12 +382,15 @@ def run_postprocessing_tefs(
         scores_values=[scores, scores_lag, scores_lag_ar],
         scores_labels=[r"$R^2$", r"$R^2$ (lag)", r"$R^2$ (lag + AR)"],
     )
-    target_file_plot = os.path.join(destination_path, "algorithm_results", "te", "feature_presence.pdf")
-    os.makedirs(os.path.dirname(target_file_plot), exist_ok=True)
-    plt.savefig(target_file_plot, bbox_inches="tight")
+    target_file_plots = {}
+    for image_format in image_formats:
+        target_file_plot = os.path.join(destination_path, "algorithm_results", "te", f"feature_presence.{image_format}")
+        os.makedirs(os.path.dirname(target_file_plot), exist_ok=True)
+        plt.savefig(target_file_plot, bbox_inches="tight")
+        target_file_plots[image_format] = target_file_plot
     plt.close(fig)
 
-    return target_file_plot, target_file_results_details
+    return target_file_plots, target_file_results_details
 
 
 def run_postprocessing_tefs_wrapper(
@@ -387,10 +398,9 @@ def run_postprocessing_tefs_wrapper(
     target_column_name,
     datasets,
     destination_path,
+    image_formats=["pdf", "png"],
 ):
     results_table_tefs_wrapper = []
-    target_file_train_test = os.path.join(destination_path, "tefs_as_wrapper", "wrapper.pdf")
-    # target_file_cv = os.path.join(constants.path_figures, "tefs_as_wrapper_cv", f"{basename}_wrapper_cv.pdf")
 
     fig, ax = plt.subplots(figsize=(10, 5))
 
@@ -501,11 +511,16 @@ def run_postprocessing_tefs_wrapper(
     ax.set_ylim(-0.1, 1.1)
     ax.grid()
 
-    os.makedirs(os.path.dirname(target_file_train_test), exist_ok=True)
-    plt.savefig(target_file_train_test, bbox_inches="tight")
+    target_files_train_test = {}
+    for image_format in image_formats:
+        # target_file_cv = os.path.join(constants.path_figures, "tefs_as_wrapper_cv", f"{basename}_wrapper_cv.pdf")
+        target_file_train_test = os.path.join(destination_path, "tefs_as_wrapper", f"wrapper.{image_format}")
+        os.makedirs(os.path.dirname(target_file_train_test), exist_ok=True)
+        plt.savefig(target_file_train_test, bbox_inches="tight")
+        target_files_train_test[image_format] = target_file_train_test
     plt.close(fig)
 
-    return target_file_train_test, target_file_results_details
+    return target_files_train_test, target_file_results_details
 
     # # --------------------- Plot cross-validation version ---------------------
     # fig, ax = plt.subplots(figsize=(10, 5))

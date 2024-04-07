@@ -14,8 +14,6 @@ FORMAT_PICKLE = Format("application/octet-stream", extension=".pkl", encoding="u
 
 
 class Causal(Process):
-    """A nice process saying 'hello'."""
-
     def __init__(self):
         inputs = [
             ComplexInput(
@@ -189,7 +187,7 @@ class Causal(Process):
             self._handler,
             identifier="causal",
             title="Causal Analysis",
-            abstract="Given train and test tabular data, performs a causal analysis with multiple configurations and outputs plots and Python dictionaries.",
+            abstract="Performs a causal analysis with multiple configurations, returning outputs plots and pkl file.",
             keywords=["causal", "analysis"],
             metadata=[
                 Metadata("PyWPS", "https://pywps.org/"),

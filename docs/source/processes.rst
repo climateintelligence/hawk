@@ -7,9 +7,9 @@ Processes
     :local:
     :depth: 1
 
-Say Hello
+Causal Analysis
 ---------
 
-.. autoprocess:: hawk.processes.wps_say_hello.SayHello
+.. autoprocess:: hawk.processes.wps_causal.Causal
    :docstring:
    :skiplines: 1

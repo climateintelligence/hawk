@@ -189,8 +189,8 @@ class Causal(Process):
             self._handler,
             identifier="causal",
             title="Causal Analysis",
-            abstract="Just says a friendly Hello. Returns a literal string output with Hello plus the inputed name.",
-            keywords=["hello", "demo"],
+            abstract="Given train and test tabular data, performs a causal analysis with multiple configurations and outputs plots and Python dictionaries.",
+            keywords=["causal", "analysis"],
             metadata=[
                 Metadata("PyWPS", "https://pywps.org/"),
                 Metadata("Birdhouse", "http://bird-house.github.io/"),

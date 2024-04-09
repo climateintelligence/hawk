@@ -66,6 +66,7 @@ Credits
 -------
 
 This package was created with Cookiecutter_ and the `bird-house/cookiecutter-birdhouse`_ project template.
+
 The two Python libraries TEFS_ and tigramite_ have been exploited to perform the causal analysis of this bird.
 
 .. _Cookiecutter: https://github.com/audreyr/cookiecutter

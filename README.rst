@@ -58,7 +58,7 @@ More specifically, the TEFS methodology can be applied in a forward and in a bac
 Documentation
 -------------
 
-Learn more about Hawk in its official documentation at https://hawk.readthedocs.io.
+Learn more about Hawk in its official documentation at https://clint-hawk.readthedocs.io.
 
 Submit bug reports, questions and feature requests at https://github.com/PaoloBonettiPolimi/hawk/issues
 

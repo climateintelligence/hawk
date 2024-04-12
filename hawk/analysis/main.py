@@ -63,7 +63,8 @@ class CausalAnalysis:
         self.tefs_features_lags = []
         if self.tefs_use_contemporary_features:
             self.tefs_features_lags.append(0)
-        self.tefs_features_lags.extend(list(range(1, self.tefs_max_lag_features + 1)))
+        if self.tefs_max_lag_features > 0:
+            self.tefs_features_lags.extend(list(range(1, self.tefs_max_lag_features + 1)))
 
         self.tefs_target_lags = list(range(1, self.tefs_max_lag_target + 1))
 

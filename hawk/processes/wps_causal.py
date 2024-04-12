@@ -221,12 +221,15 @@ class Causal(Process):
 
         tefs_direction = request.inputs["tefs_direction"][0].data
         tefs_use_contemporary_features = request.inputs["tefs_use_contemporary_features"][0].data
-        tefs_max_lag_features = int(request.inputs["tefs_max_lag_features"][0].data)
+        if str(request.inputs["tefs_max_lag_features"][0].data) == "no_lag":
+            tefs_max_lag_features = 0
+        else:
+            tefs_max_lag_features = int(request.inputs["tefs_max_lag_features"][0].data)
         tefs_max_lag_target = int(request.inputs["tefs_max_lag_target"][0].data)
 
         workdir = Path(self.workdir)
 
-        if not tefs_use_contemporary_features and tefs_max_lag_features == "no_lag":
+        if not tefs_use_contemporary_features and tefs_max_lag_features == 0:
             raise ValueError("You cannot use no lag features and not use contemporary features in TEFS.")
 
         causal_analysis = CausalAnalysis(

@@ -39,12 +39,14 @@ class Causal(Process):
                 "Target Column Name",
                 data_type="string",
                 abstract="Please enter the case-specific name of the target variable in the dataframe.",
+                default="target",
             ),
             LiteralInput(
                 "pcmci_test_choice",
                 "PCMCI Test Choice",
                 data_type="string",
                 abstract="Choose the independence test to be used in PCMCI.",
+                default="ParCorr",
                 allowed_values=[
                     "ParCorr",
                     "CMIknn",
@@ -55,6 +57,7 @@ class Causal(Process):
                 "PCMCI Max Lag",
                 data_type="string",
                 abstract="Choose the maximum lag to test used in PCMCI.",
+                default="1",
                 allowed_values=[
                     "0",
                     "1",
@@ -69,6 +72,7 @@ class Causal(Process):
                 "TEFS Direction",
                 data_type="string",
                 abstract="Choose the direction of the TEFS algorithm.",
+                default="both",
                 allowed_values=[
                     "forward",
                     "backward",
@@ -87,6 +91,7 @@ class Causal(Process):
                 "TEFS Max Lag Features",
                 data_type="string",
                 abstract="Choose the maximum lag of the features in the TEFS algorithm.",
+                default="1",
                 allowed_values=[
                     "no_lag",
                     "1",
@@ -101,6 +106,7 @@ class Causal(Process):
                 "TEFS Max Lag Target",
                 data_type="string",
                 abstract="Choose the maximum lag of the target in the TEFS algorithm.",
+                default="1",
                 allowed_values=[
                     "1",
                     "2",

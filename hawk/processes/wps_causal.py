@@ -10,7 +10,7 @@ LOGGER = logging.getLogger("PYWPS")
 
 FORMAT_PNG = Format("image/png", extension=".png", encoding="base64")
 FORMAT_PDF = Format("application/pdf", extension=".pdf", encoding="utf-8")
-FORMAT_PICKLE = Format("application/octet-stream", extension=".pkl", encoding="utf-8")
+FORMAT_PICKLE = Format("application/octet-stream", extension=".pkl")
 
 
 class Causal(Process):

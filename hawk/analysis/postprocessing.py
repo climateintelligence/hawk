@@ -6,10 +6,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
+from tefs.metrics import regression_analysis
 
 # from tigramite import plotting as tp
 from .file_management import save_to_pkl_file
-from .metrics import regression_analysis
 from .pcmci_tools import get_connected_variables
 
 

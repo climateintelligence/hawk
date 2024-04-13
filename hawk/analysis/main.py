@@ -2,11 +2,11 @@ import itertools
 import os
 
 import pandas as pd
+from tefs.metrics import regression_analysis
 from tigramite.independence_tests.cmiknn import CMIknn
 from tigramite.independence_tests.parcorr import ParCorr
 
 from .file_management import save_to_pkl_file
-from .metrics import regression_analysis
 from .pcmci_tools import initialize_tigramite_df
 from .postprocessing import (
     run_postprocessing_pcmci,

@@ -12,8 +12,6 @@ dependencies:
 - ipython
 - pandoc
 - pandas
-- tigramite
-- tefs
 - pip:
     - tigramite
     - tefs

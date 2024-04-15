@@ -5,11 +5,13 @@ channels:
 - defaults
 dependencies:
 - pip
+- python>=3.9,<3.11
 - pywps>=4.4
 - sphinx
 - nbsphinx
 - ipython
 - pandoc
 - pandas
-- tigramite
-- tefs
+- pip:
+    - tigramite
+    - tefs

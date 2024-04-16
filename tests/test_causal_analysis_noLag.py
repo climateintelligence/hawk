@@ -66,4 +66,3 @@ def test_causal_analysis_noLag():
     causal_analysis.run()
 
     os.system("rm -r tests/output")
-    

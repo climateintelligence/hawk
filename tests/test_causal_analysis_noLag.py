@@ -29,7 +29,7 @@ def test_content(response):
     # assert 'GitHub' in BeautifulSoup(response.content).title.string
 
 
-def test_causal_analysis():
+def test_causal_analysis_noLag():
     df_train = pd.read_csv("hawk/demo/Ticino_train.csv", header=0)
     df_test = pd.read_csv("hawk/demo/Ticino_test.csv", header=0)
     target_column_name = "target"
@@ -40,6 +40,14 @@ def test_causal_analysis():
     tefs_max_lag_features = "no_lag"
     tefs_max_lag_target = 1
     workdir = "tests/output"
+
+    if str(tefs_max_lag_features) == "no_lag":
+        tefs_max_lag_features = 0
+    else:
+        tefs_max_lag_features = int(tefs_max_lag_features)
+
+    if not tefs_use_contemporary_features and tefs_max_lag_features == 0:
+        raise ValueError("You cannot use no lag features and not use contemporary features in TEFS.")
 
     causal_analysis = CausalAnalysis(
         df_train,

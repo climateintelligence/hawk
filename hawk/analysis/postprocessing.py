@@ -6,10 +6,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
+from tefs.metrics import regression_analysis
 
 # from tigramite import plotting as tp
 from .file_management import save_to_pkl_file
-from .metrics import regression_analysis
 from .pcmci_tools import get_connected_variables
 
 
@@ -257,7 +257,7 @@ def run_postprocessing_pcmci(
     target_file_plots = {}
     for image_format in image_formats:
         target_file_plot = os.path.join(
-            destination_path, "algorithm_results", "pcmci", f"feature_presence.{image_format}"
+            destination_path, "algorithm_results", "pcmci", f"feature_presence_pcmci.{image_format}"
         )
         os.makedirs(os.path.dirname(target_file_plot), exist_ok=True)
         plt.savefig(target_file_plot, bbox_inches="tight")
@@ -384,7 +384,9 @@ def run_postprocessing_tefs(
     )
     target_file_plots = {}
     for image_format in image_formats:
-        target_file_plot = os.path.join(destination_path, "algorithm_results", "te", f"feature_presence.{image_format}")
+        target_file_plot = os.path.join(
+            destination_path, "algorithm_results", "te", f"feature_presence_tefs.{image_format}"
+        )
         os.makedirs(os.path.dirname(target_file_plot), exist_ok=True)
         plt.savefig(target_file_plot, bbox_inches="tight")
         target_file_plots[image_format] = target_file_plot

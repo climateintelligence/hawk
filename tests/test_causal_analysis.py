@@ -34,8 +34,8 @@ def test_causal_analysis():
     df_test = pd.read_csv("hawk/demo/Ticino_test.csv", header=0)
     target_column_name = "target"
     pcmci_test_choice = "ParCorr"
-    pcmci_max_lag = 0
-    tefs_direction = "forward"
+    pcmci_max_lag = 2
+    tefs_direction = "both"
     tefs_use_contemporary_features = True
     tefs_max_lag_features = 1
     tefs_max_lag_target = 1

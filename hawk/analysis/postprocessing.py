@@ -12,7 +12,6 @@ from tefs.metrics import regression_analysis
 from .file_management import save_to_pkl_file
 from .pcmci_tools import get_connected_variables
 
-
 # Adjusted custom sort key function to handle lag sequences and replace them with the last lag
 def general_custom_sort_key(s):
     # Find all sequences like [0,1], [1,2,3,5,6], etc.
@@ -263,6 +262,8 @@ def run_postprocessing_pcmci(
         plt.savefig(target_file_plot, bbox_inches="tight")
         target_file_plots[image_format] = target_file_plot
     plt.close(fig)
+    
+    print(f"PCMCI results details: {results_table_pcmci}")
 
     return target_file_plots, target_file_results_details
 
@@ -348,6 +349,8 @@ def run_postprocessing_tefs(
     # Export the file to pkl
     target_file_results_details = os.path.join(destination_path, "results_details_te.pkl")
     save_to_pkl_file(target_file_results_details, results_table_te)
+    
+    print(f"results_table_te: {results_table_te}")
 
     # Feature presences heatmap
     if target_column_name in all_basin_variables:

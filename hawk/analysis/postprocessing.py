@@ -264,8 +264,6 @@ def run_postprocessing_pcmci(
         target_file_plots[image_format] = target_file_plot
     plt.close(fig)
 
-    print(f"PCMCI results details: {results_table_pcmci}")
-
     return target_file_plots, target_file_results_details
 
 
@@ -350,8 +348,6 @@ def run_postprocessing_tefs(
     # Export the file to pkl
     target_file_results_details = os.path.join(destination_path, "results_details_te.pkl")
     save_to_pkl_file(target_file_results_details, results_table_te)
-
-    print(f"results_table_te: {results_table_te}")
 
     # Feature presences heatmap
     if target_column_name in all_basin_variables:

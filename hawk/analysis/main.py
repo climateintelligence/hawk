@@ -82,15 +82,15 @@ class CausalAnalysis:
         baseline = {}
 
         features_names = self.datasets["normal"]["var_names"]
-        
+
         print(f"features_names: {features_names}")
 
         configs = []
 
-        # Only autoregressive baselines from 1 to the maximum target lag 
+        # Only autoregressive baselines from 1 to the maximum target lag
         for i in range(1, self.tefs_max_lag_target+1):
             configs.append((f"AR({i})", {self.target_column_name: list(range(1, i + 1))}))
-            
+
         print(f"AR configs: {configs}")
 
         # All features without AR
@@ -100,18 +100,19 @@ class CausalAnalysis:
                 {feature: self.tefs_features_lags for feature in features_names if feature != self.target_column_name},
             )
         )
-        
+
         print(f"Full configs: {configs}")
-        
+
         # All features with AR
         configs.append(
             (
                 "All features and AR",
-                {feature: self.tefs_features_lags if feature != self.target_column_name else list(range(1, self.tefs_max_lag_target+1)) for feature in features_names},
+                {feature: self.tefs_features_lags if feature != self.target_column_name
+                    else list(range(1, self.tefs_max_lag_target+1)) for feature in features_names},
             )
         )
-        
-        print(f"Full configs: {configs}")        
+
+        print(f"Full configs: {configs}")
 
         for label, inputs_names_lags in configs:
             baseline[label] = {
@@ -123,7 +124,7 @@ class CausalAnalysis:
                     df_test=self.datasets["normal"]["test"],
                 ),
             }
-            
+
         print(f"Baselines: {baseline}")
 
         target_file = os.path.join(self.workdir, "baseline.pkl")
@@ -170,7 +171,7 @@ class CausalAnalysis:
                 "dataset_name": dataset_name,
             }
             configurations.append(configuration)
-            
+
         print(f"TEFS configurations: {configurations}")
 
         # Run the analysis
@@ -183,7 +184,7 @@ class CausalAnalysis:
                     config=config,
                 )
             )
-        
+
         print(f"TEFS results: {results}")
 
         return results
@@ -195,14 +196,14 @@ class CausalAnalysis:
 
         # Define the tests
         parcorr = ParCorr(significance="analytic")
-        #cmiknn = CMIknn(
-        #    significance="shuffle_test",
-        #    knn=0.1,
-        #    shuffle_neighbors=5,
-        #    transform="ranks",
-        #    sig_samples=200,
-        #)
-        cmiknn = CMIknn()
+        cmiknn = CMIknn(
+            significance="shuffle_test",
+            knn=0.1,
+            shuffle_neighbors=5,
+            transform="ranks",
+            sig_samples=200,
+        )
+        # cmiknn = CMIknn()
 
         # Create the dictionary of tests
         independence_tests = {
@@ -238,7 +239,7 @@ class CausalAnalysis:
                 "dataset_name": dataset_name,
             }
             configurations.append(configuration)
-            
+
         print(f'PCMCI configurations: {configurations}')
 
         # Run the analysis
@@ -252,9 +253,7 @@ class CausalAnalysis:
                 )
             )
         print(f"PCMCI+ results: {results}")
-        
-        save_to_pkl_file("/work/bk1318/b382633/pcmci_results.pkl", results)
-        
+
         return results
 
     def run(self):
@@ -264,19 +263,19 @@ class CausalAnalysis:
         if self.response:
             self.response.update_status("Performing TEFS analysis", 33)
         tefs_results = self.run_tefs_analysis()
-        #if self.response:
-        #    self.response.update_status("Performing PCMCI analysis", 66)
-        #pcmci_results = self.run_pcmci_analysis()
+        if self.response:
+            self.response.update_status("Performing PCMCI analysis", 66)
+        pcmci_results = self.run_pcmci_analysis()
 
-        #if self.response:
-        #    self.response.update_status("Postprocessing PCMCI", 80)
-        #self.plot_pcmci, self.details_pcmci = run_postprocessing_pcmci(
-        #    results_pcmci=pcmci_results,
-        #    target_column_name=self.target_column_name,
-        #    datasets=self.datasets,
-        #    destination_path=self.workdir,
-        #    image_formats=["pdf", "png"],
-        #)
+        if self.response:
+            self.response.update_status("Postprocessing PCMCI", 80)
+        self.plot_pcmci, self.details_pcmci = run_postprocessing_pcmci(
+            results_pcmci=pcmci_results,
+            target_column_name=self.target_column_name,
+            datasets=self.datasets,
+            destination_path=self.workdir,
+            image_formats=["pdf", "png"],
+        )
         if self.response:
             self.response.update_status("Postprocessing TEFS", 90)
         self.plot_tefs, self.details_tefs = run_postprocessing_tefs(
@@ -286,12 +285,12 @@ class CausalAnalysis:
             destination_path=self.workdir,
             image_formats=["pdf", "png"],
         )
-        #if self.response:
-        #    self.response.update_status("Postprocessing TEFS Wrapper", 95)
-        #self.plot_tefs_wrapper, self.details_tefs_wrapper = run_postprocessing_tefs_wrapper(
-        #    results_tefs=tefs_results,
-        #    target_column_name=self.target_column_name,
-        #    datasets=self.datasets,
-        #    destination_path=self.workdir,
-        #    image_formats=["pdf", "png"],
-        #)
+        if self.response:
+            self.response.update_status("Postprocessing TEFS Wrapper", 95)
+        self.plot_tefs_wrapper, self.details_tefs_wrapper = run_postprocessing_tefs_wrapper(
+            results_tefs=tefs_results,
+            target_column_name=self.target_column_name,
+            datasets=self.datasets,
+            destination_path=self.workdir,
+            image_formats=["pdf", "png"],
+        )

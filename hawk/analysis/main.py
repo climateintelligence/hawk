@@ -83,15 +83,11 @@ class CausalAnalysis:
 
         features_names = self.datasets["normal"]["var_names"]
 
-        print(f"features_names: {features_names}")
-
         configs = []
 
         # Only autoregressive baselines from 1 to the maximum target lag
         for i in range(1, self.tefs_max_lag_target+1):
             configs.append((f"AR({i})", {self.target_column_name: list(range(1, i + 1))}))
-
-        print(f"AR configs: {configs}")
 
         # All features without AR
         configs.append(
@@ -101,8 +97,6 @@ class CausalAnalysis:
             )
         )
 
-        print(f"Full configs: {configs}")
-
         # All features with AR
         configs.append(
             (
@@ -111,8 +105,6 @@ class CausalAnalysis:
                     else list(range(1, self.tefs_max_lag_target+1)) for feature in features_names},
             )
         )
-
-        print(f"Full configs: {configs}")
 
         for label, inputs_names_lags in configs:
             baseline[label] = {
@@ -124,8 +116,6 @@ class CausalAnalysis:
                     df_test=self.datasets["normal"]["test"],
                 ),
             }
-
-        print(f"Baselines: {baseline}")
 
         target_file = os.path.join(self.workdir, "baseline.pkl")
         save_to_pkl_file(target_file, baseline)
@@ -172,8 +162,6 @@ class CausalAnalysis:
             }
             configurations.append(configuration)
 
-        print(f"TEFS configurations: {configurations}")
-
         # Run the analysis
         results = []
         for config in configurations:
@@ -184,8 +172,6 @@ class CausalAnalysis:
                     config=config,
                 )
             )
-
-        print(f"TEFS results: {results}")
 
         return results
 
@@ -240,8 +226,6 @@ class CausalAnalysis:
             }
             configurations.append(configuration)
 
-        print(f'PCMCI configurations: {configurations}')
-
         # Run the analysis
         results = []
         for config in configurations:
@@ -252,7 +236,6 @@ class CausalAnalysis:
                     independence_tests=independence_tests,
                 )
             )
-        print(f"PCMCI+ results: {results}")
 
         return results
 

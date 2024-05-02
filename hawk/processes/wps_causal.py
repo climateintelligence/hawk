@@ -5,6 +5,8 @@ from pathlib import Path
 import logging
 import pandas as pd
 from hawk.analysis import CausalAnalysis
+from pathlib import Path
+import os
 
 LOGGER = logging.getLogger("PYWPS")
 
@@ -234,6 +236,7 @@ class Causal(Process):
         tefs_max_lag_target = int(request.inputs["tefs_max_lag_target"][0].data)
 
         workdir = Path(self.workdir)
+        os.environ['MPLCONFIGDIR'] = os.path.join(workdir, "/matplotlib")
 
         if not tefs_use_contemporary_features and tefs_max_lag_features == 0:
             raise ValueError("You cannot use no lag features and not use contemporary features in TEFS.")

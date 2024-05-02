@@ -5,7 +5,6 @@ from pathlib import Path
 import logging
 import pandas as pd
 from hawk.analysis import CausalAnalysis
-from pathlib import Path
 import os
 
 LOGGER = logging.getLogger("PYWPS")

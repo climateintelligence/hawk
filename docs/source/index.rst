@@ -4,6 +4,7 @@
    :maxdepth: 1
    :caption: Contents:
 
+   service
    installation
    configuration
    notebooks/index

@@ -2,11 +2,11 @@ import itertools
 import os
 
 import pandas as pd
+from tefs.metrics import regression_analysis
 from tigramite.independence_tests.cmiknn import CMIknn
 from tigramite.independence_tests.parcorr import ParCorr
 
 from .file_management import save_to_pkl_file
-from .metrics import regression_analysis
 from .pcmci_tools import initialize_tigramite_df
 from .postprocessing import (
     run_postprocessing_pcmci,
@@ -63,7 +63,8 @@ class CausalAnalysis:
         self.tefs_features_lags = []
         if self.tefs_use_contemporary_features:
             self.tefs_features_lags.append(0)
-        self.tefs_features_lags.extend(list(range(1, self.tefs_max_lag_features + 1)))
+        if self.tefs_max_lag_features > 0:
+            self.tefs_features_lags.extend(list(range(1, self.tefs_max_lag_features + 1)))
 
         self.tefs_target_lags = list(range(1, self.tefs_max_lag_target + 1))
 
@@ -84,15 +85,24 @@ class CausalAnalysis:
 
         configs = []
 
-        # Autoregressive baselines
-        for i in range(1, self.tefs_max_lag_target):
+        # Only autoregressive baselines from 1 to the maximum target lag
+        for i in range(1, self.tefs_max_lag_target+1):
             configs.append((f"AR({i})", {self.target_column_name: list(range(1, i + 1))}))
 
-        # With all features
+        # All features without AR
         configs.append(
             (
                 "All features",
-                {feature: self.tefs_features_lags for feature in features_names},
+                {feature: self.tefs_features_lags for feature in features_names if feature != self.target_column_name},
+            )
+        )
+
+        # All features with AR
+        configs.append(
+            (
+                "All features and AR",
+                {feature: self.tefs_features_lags if feature != self.target_column_name
+                    else list(range(1, self.tefs_max_lag_target+1)) for feature in features_names},
             )
         )
 
@@ -168,7 +178,7 @@ class CausalAnalysis:
     def run_pcmci_analysis(
         self,
     ):
-        lag_options = self.pcmci_features_lags  # max lag
+        lag_options = self.pcmci_features_lags  # list from 0 to max_lag
 
         # Define the tests
         parcorr = ParCorr(significance="analytic")
@@ -179,6 +189,7 @@ class CausalAnalysis:
             transform="ranks",
             sig_samples=200,
         )
+        # cmiknn = CMIknn()
 
         # Create the dictionary of tests
         independence_tests = {

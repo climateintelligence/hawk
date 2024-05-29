@@ -22,7 +22,7 @@ Hawk
     :alt: Join the chat at https://gitter.im/bird-house/birdhouse
 
 Hawk (the bird)
-  *Hawk is a bird designed to perform causal analysis for climate data or, in general, for spatio-temporal data.*
+  *Hawk is a bird designed to perform causal analysis for climate data or, in general, for time-series.*
 
 
 Documentation
@@ -44,7 +44,7 @@ License
 -------
 
 * Free software: GNU General Public License v3
-* Documentation: https://hawk.readthedocs.io.
+* Documentation: https://clint-hawk.readthedocs.io.
 
 
 Credits

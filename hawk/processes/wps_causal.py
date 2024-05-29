@@ -5,12 +5,13 @@ from pathlib import Path
 import logging
 import pandas as pd
 from hawk.analysis import CausalAnalysis
+import os
 
 LOGGER = logging.getLogger("PYWPS")
 
 FORMAT_PNG = Format("image/png", extension=".png", encoding="base64")
 FORMAT_PDF = Format("application/pdf", extension=".pdf", encoding="utf-8")
-FORMAT_PICKLE = Format("application/octet-stream", extension=".pkl", encoding="utf-8")
+FORMAT_PICKLE = Format("application/octet-stream", extension=".pkl")
 
 
 class Causal(Process):
@@ -39,12 +40,14 @@ class Causal(Process):
                 "Target Column Name",
                 data_type="string",
                 abstract="Please enter the case-specific name of the target variable in the dataframe.",
+                default="target",
             ),
             LiteralInput(
                 "pcmci_test_choice",
                 "PCMCI Test Choice",
                 data_type="string",
                 abstract="Choose the independence test to be used in PCMCI.",
+                default="ParCorr",
                 allowed_values=[
                     "ParCorr",
                     "CMIknn",
@@ -55,6 +58,7 @@ class Causal(Process):
                 "PCMCI Max Lag",
                 data_type="string",
                 abstract="Choose the maximum lag to test used in PCMCI.",
+                default="1",
                 allowed_values=[
                     "0",
                     "1",
@@ -69,6 +73,7 @@ class Causal(Process):
                 "TEFS Direction",
                 data_type="string",
                 abstract="Choose the direction of the TEFS algorithm.",
+                default="both",
                 allowed_values=[
                     "forward",
                     "backward",
@@ -79,14 +84,15 @@ class Causal(Process):
                 "tefs_use_contemporary_features",
                 "TEFS Use Contemporary Features",
                 data_type="boolean",
-                abstract="Choose whether to use comtemporary features in the TEFS algorithm.",
-                default="Yes",
+                abstract="Choose whether to use contemporary features in the TEFS algorithm.",
+                default=True,
             ),
             LiteralInput(
                 "tefs_max_lag_features",
                 "TEFS Max Lag Features",
                 data_type="string",
                 abstract="Choose the maximum lag of the features in the TEFS algorithm.",
+                default="1",
                 allowed_values=[
                     "no_lag",
                     "1",
@@ -101,6 +107,7 @@ class Causal(Process):
                 "TEFS Max Lag Target",
                 data_type="string",
                 abstract="Choose the maximum lag of the target in the TEFS algorithm.",
+                default="1",
                 allowed_values=[
                     "1",
                     "2",
@@ -221,12 +228,16 @@ class Causal(Process):
 
         tefs_direction = request.inputs["tefs_direction"][0].data
         tefs_use_contemporary_features = request.inputs["tefs_use_contemporary_features"][0].data
-        tefs_max_lag_features = int(request.inputs["tefs_max_lag_features"][0].data)
+        if str(request.inputs["tefs_max_lag_features"][0].data) == "no_lag":
+            tefs_max_lag_features = 0
+        else:
+            tefs_max_lag_features = int(request.inputs["tefs_max_lag_features"][0].data)
         tefs_max_lag_target = int(request.inputs["tefs_max_lag_target"][0].data)
 
         workdir = Path(self.workdir)
+        os.environ['MPLCONFIGDIR'] = os.path.join(workdir, "/matplotlib")
 
-        if not tefs_use_contemporary_features and tefs_max_lag_features == "no_lag":
+        if not tefs_use_contemporary_features and tefs_max_lag_features == 0:
             raise ValueError("You cannot use no lag features and not use contemporary features in TEFS.")
 
         causal_analysis = CausalAnalysis(

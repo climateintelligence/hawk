@@ -7,7 +7,7 @@ Climate Service
     :local:
     :depth: 1
 
-Scientific Methode
+Scientific Method
 ------------------
 
 
